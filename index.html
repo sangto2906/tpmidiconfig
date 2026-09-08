@@ -32,12 +32,12 @@
             <title id="surface-map-title">TPMidi controller surface</title>
             <desc id="surface-map-description">Select a slider or encoder to configure its mapping.</desc>
             <rect class="device-body" x="10" y="10" width="840" height="510" rx="12" />
-            <rect class="display-bezel" x="520" y="45" width="280" height="100" rx="4" />
-            <rect class="display-screen" x="534" y="59" width="252" height="72" rx="2" />
-            <text class="oled-primary" id="oledPrimary" x="660" y="95" text-anchor="middle">TPMidi</text>
-            <text class="oled-secondary" id="oledSecondary" x="660" y="109" text-anchor="middle"></text>
-            <rect class="oled-progress-track" x="558" y="117" width="204" height="5" rx="2.5" />
-            <rect class="oled-progress-fill" id="oledProgressFill" x="558" y="117" width="0" height="5" rx="2.5" />
+            <rect class="display-bezel" x="610" y="38" width="180" height="112" rx="4" />
+            <rect class="display-screen" x="624" y="52" width="152" height="84" rx="2" />
+            <text class="oled-primary" id="oledPrimary" x="700" y="94" text-anchor="middle">TPMidi</text>
+            <text class="oled-secondary" id="oledSecondary" x="700" y="108" text-anchor="middle"></text>
+            <rect class="oled-progress-track" x="640" y="122" width="120" height="5" rx="2.5" />
+            <rect class="oled-progress-fill" id="oledProgressFill" x="640" y="122" width="0" height="5" rx="2.5" />
 
             <g class="surface-control" data-control="slider-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select slider S1">
               <rect class="control-hit" x="54" y="94" width="76" height="278" rx="12" />
@@ -231,7 +231,7 @@ function setSurfaceDetail(index, lines) {
 function setOled(line1, line2, progress = 0) {
   document.querySelector('#oledPrimary').textContent = line1;
   document.querySelector('#oledSecondary').textContent = line2;
-  document.querySelector('#oledProgressFill').setAttribute('width', String(204 * Math.max(0, Math.min(1, progress))));
+  document.querySelector('#oledProgressFill').setAttribute('width', String(120 * Math.max(0, Math.min(1, progress))));
 }
 function updateSurfaceMap(config) {
   config.sliders.forEach((cc, i) => { document.querySelector(`[data-surface-label="slider-${i}"]`).textContent = `CC ${cc}`; });
