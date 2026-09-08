@@ -30,8 +30,8 @@
             <rect class="device-body" x="10" y="10" width="540" height="600" rx="12" />
             <rect class="display-bezel" x="356" y="58" width="144" height="98" rx="4" />
             <rect class="display-screen" x="368" y="70" width="120" height="74" rx="2" />
-            <text class="oled-primary" id="oledPrimary" x="428" y="102" text-anchor="middle">S1 · CC 1</text>
-            <text class="oled-secondary" id="oledSecondary" x="428" y="122" text-anchor="middle">Ready to configure</text>
+            <text class="oled-primary" id="oledPrimary" x="428" y="108" text-anchor="middle">TPMidi</text>
+            <text class="oled-secondary" id="oledSecondary" x="428" y="122" text-anchor="middle"></text>
             <rect class="oled-progress-track" x="380" y="130" width="96" height="5" rx="2.5" />
             <rect class="oled-progress-fill" id="oledProgressFill" x="380" y="130" width="0" height="5" rx="2.5" />
 
@@ -230,15 +230,9 @@ function setOled(line1, line2, progress = 0) {
   document.querySelector('#oledSecondary').textContent = line2;
   document.querySelector('#oledProgressFill').setAttribute('width', String(96 * Math.max(0, Math.min(1, progress))));
 }
-function showSelectedOnOled() {
-  const [kind, indexText] = selected.split('-'), index = Number(indexText);
-  if (kind === 'slider') setOled(`S${index + 1} · CC ${configState.sliders[index]}`, 'Ready to configure');
-  else { const mapping = configState.encoders[index]; setOled(`E${index + 1} · ${rotaryLabel(mapping)}`, `Press · ${pressLabel(mapping)}`); }
-}
 function updateSurfaceMap(config) {
   config.sliders.forEach((cc, i) => { document.querySelector(`[data-surface-label="slider-${i}"]`).textContent = `CC ${cc}`; });
   config.encoders.forEach((mapping, i) => setSurfaceDetail(i, [`Rot: ${rotaryLabel(mapping)}`, `Press: ${pressLabel(mapping)}`]));
-  if (!updater.busy) showSelectedOnOled();
 }
 function noteOptions(value) { return Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>Note ${n}</option>`).join(''); }
 function renderControlEditor() {
@@ -266,7 +260,6 @@ function selectControl(id) {
   selected = id;
   document.querySelectorAll('.surface-control').forEach(el => { const isSelected = el.dataset.control === id; el.dataset.selected = String(isSelected); el.setAttribute('aria-pressed', String(isSelected)); });
   renderControlEditor();
-  if (!updater.busy) showSelectedOnOled();
   document.querySelector('#controlEditor')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
