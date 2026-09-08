@@ -101,8 +101,8 @@
       <section class="panel configuration-panel" aria-labelledby="configuration-title">
         <div class="panel-heading">
           <div>
-            <h2 id="configuration-title">Configuration</h2>
-            <p class="hint">Choose a profile first, then set the controls in the same order as the hardware.</p>
+            <h2 id="configuration-title">Control editor</h2>
+            <p class="hint">Choose a profile, then select a control on the surface to edit it.</p>
           </div>
           <div class="actions">
             <button id="read" type="button">Read device</button>
@@ -121,14 +121,7 @@
           </label>
           <p id="profileHelp" class="hint"></p>
         </div>
-        <section class="mapping-group" aria-labelledby="sliders-title">
-          <div class="group-heading"><h2 id="sliders-title">Sliders</h2><p>Assign the performance CC sent by S1, S2 and S3.</p></div>
-          <div class="cards slider-cards" id="sliderCards"></div>
-        </section>
-        <section class="mapping-group" aria-labelledby="encoders-title">
-          <div class="group-heading"><h2 id="encoders-title">Encoders</h2><p>Rotary and press mappings follow the OLED grid: E1/E2 left, E3/E4 right.</p></div>
-          <div class="cards encoder-cards" id="encoderCards"></div>
-        </section>
+        <section class="control-editor" id="controlEditor" aria-live="polite"></section>
       </section>
     </section>
     <section class="panel firmware-panel" aria-labelledby="firmware-title">
@@ -186,7 +179,8 @@ const profileDefinitions = {
     press: [['No action', 0], ['Mackie Control: Play', 3], ['Mackie Control: Record', 4], ['Mackie Control: Undo', 5], ['Mackie Control: Redo', 6]]
   }
 };
-let midiAccess, midiOut, midiIn, connected = false, selected = 'slider-0', waiter;
+const defaultConfig = () => ({ profile: 0, sliders: [1, 11, 14], encoders: Array.from({length: 4}, () => ({mode: 0, parameter: 0, cw: 0, ccw: 0, press: 0})) });
+let midiAccess, midiOut, midiIn, connected = false, selected = 'slider-0', waiter, configState = defaultConfig();
 const updater = new TPMidiUpdater(frame => {
   if(!connected || !midiOut) throw new Error('Connect TPMidi first.');
   midiOut.send(frame);
@@ -202,24 +196,11 @@ const rotaryOptions = value => optionsFor(selectedProfile().rotary)(value);
 const pressOptions = value => optionsFor(selectedProfile().press)(value);
 const ccOptions = value => Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>CC ${n}</option>`).join('');
 
-function render(config = { profile: 0, sliders: [1, 11, 14], encoders: Array.from({length: 4}, () => ({mode: 0, parameter: 0, cw: 0, ccw: 0, press: 0})) }) {
-  document.querySelector('#profile').value = config.profile;
+function render(config = defaultConfig()) {
+  configState = { profile: config.profile, sliders: [...config.sliders], encoders: config.encoders.map(mapping => ({...mapping})) };
+  document.querySelector('#profile').value = configState.profile;
   document.querySelector('#profileHelp').textContent = selectedProfile().help;
-  document.querySelector('#sliderCards').innerHTML = config.sliders.map((cc, i) => `<article class="card" id="slider-${i}"><h3>Slider S${i + 1}</h3><label>Control Change<select data-slider="${i}">${ccOptions(cc)}</select></label></article>`).join('');
-  const encoderOrder = [0, 2, 1, 3];
-  document.querySelector('#encoderCards').innerHTML = encoderOrder.map(i => { const mapping = config.encoders[i]; return `
-    <article class="card" id="encoder-${i}">
-      <h3>Encoder E${i + 1}</h3>
-      <div class="fields">
-        <label class="full">Message type<select data-encoder="${i}" data-field="mode"><option value="0" ${mapping.mode === 0 ? 'selected' : ''}>DAW action (SysEx / Mackie)</option><option value="1" ${mapping.mode === 1 ? 'selected' : ''}>Relative CC</option><option value="2" ${mapping.mode === 2 ? 'selected' : ''}>MIDI notes</option></select></label>
-        <label data-role="parameter">Rotary target<select data-encoder="${i}" data-field="parameter">${rotaryOptions(mapping.parameter)}</select></label>
-        <label data-role="cw" class="hidden">Reserved<select data-encoder="${i}" data-field="cw"><option value="0">0</option></select></label>
-        <label data-role="ccw" class="hidden">Reserved<select data-encoder="${i}" data-field="ccw"><option value="0">0</option></select></label>
-        <label data-role="press" class="full">Press action<select data-encoder="${i}" data-field="press">${pressOptions(mapping.press)}</select></label>
-      </div>
-    </article>`; }).join('');
-  document.querySelectorAll('[data-encoder]').forEach(el => el.addEventListener('change', () => { updateEncoderFields(); updateSurfaceMap(collectConfig()); }));
-  updateEncoderFields(); updateSurfaceMap(config); selectControl(selected);
+  updateSurfaceMap(configState); selectControl(selected);
 }
 
 function updateSurfaceMap(config) {
@@ -230,33 +211,37 @@ function updateSurfaceMap(config) {
   });
 }
 
-function updateEncoderFields() {
-  for (let i = 0; i < 4; i++) {
-    const card = document.querySelector(`#encoder-${i}`), mode = Number(card.querySelector('[data-field="mode"]').value);
-    const set = (field, label, options, disabled = false) => { const select = card.querySelector(`[data-field="${field}"]`); const value = select.value; select.innerHTML = options(value); select.disabled = disabled; select.parentElement.firstChild.textContent = label; };
-    if (mode === MODE.ACTION) {
-      set('parameter', 'Rotary target', rotaryOptions); set('cw', 'Reserved', () => '<option value="0">0</option>', true); set('ccw', 'Reserved', () => '<option value="0">0</option>', true); set('press', 'Press action', pressOptions);
-    } else if (mode === MODE.RELATIVE_CC) {
-      set('parameter', 'CC number', ccOptions); set('cw', 'Reserved', () => '<option value="0">0</option>', true); set('ccw', 'Reserved', () => '<option value="0">0</option>', true); set('press', 'Unused', pressOptions, true);
-    } else {
-      const notes = value => Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>Note ${n}</option>`).join('');
-      set('parameter', 'Rotary disabled', () => '<option value="0">0</option>', true); set('cw', 'Rotation disabled', () => '<option value="0">0</option>', true); set('ccw', 'Reserved', () => '<option value="0">0</option>', true); set('press', 'Press note', notes);
-    }
+function noteOptions(value) { return Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>Note ${n}</option>`).join(''); }
+function renderControlEditor() {
+  const editor = document.querySelector('#controlEditor');
+  const [kind, indexText] = selected.split('-'), index = Number(indexText);
+  if (kind === 'slider') {
+    editor.innerHTML = `<div class="editor-heading"><h2>Slider S${index + 1}</h2><p>Performance Control Change sent on MIDIIN.</p></div><label>Control Change<select data-editor="slider" data-index="${index}">${ccOptions(configState.sliders[index])}</select></label>`;
+  } else {
+    const mapping = configState.encoders[index];
+    const isAction = mapping.mode === MODE.ACTION, isRelative = mapping.mode === MODE.RELATIVE_CC;
+    const parameter = isAction ? rotaryOptions(mapping.parameter) : '<option value="0">0</option>';
+    const press = isAction || isRelative ? pressOptions(mapping.press) : noteOptions(mapping.press);
+    editor.innerHTML = `<div class="editor-heading"><h2>Encoder E${index + 1}</h2><p>Configure rotary and press behaviour for this control.</p></div><div class="fields"><label class="full">Message type<select data-editor="encoder" data-index="${index}" data-field="mode"><option value="0" ${mapping.mode === 0 ? 'selected' : ''}>DAW action (SysEx / Mackie)</option><option value="1" ${mapping.mode === 1 ? 'selected' : ''}>Relative CC</option><option value="2" ${mapping.mode === 2 ? 'selected' : ''}>MIDI notes</option></select></label><label>${isAction ? 'Rotary target' : isRelative ? 'CC number' : 'Rotary disabled'}<select data-editor="encoder" data-index="${index}" data-field="parameter" ${isAction || isRelative ? '' : 'disabled'}>${isAction ? parameter : isRelative ? ccOptions(mapping.parameter) : parameter}</select></label><label class="full">${isAction ? 'Press action' : isRelative ? 'Unused' : 'Press note'}<select data-editor="encoder" data-index="${index}" data-field="press" ${isRelative ? 'disabled' : ''}>${press}</select></label></div>`;
   }
+  editor.querySelectorAll('[data-editor]').forEach(el => el.addEventListener('change', event => {
+    const target = event.currentTarget, index = Number(target.dataset.index), value = Number(target.value);
+    if (target.dataset.editor === 'slider') configState.sliders[index] = value;
+    else configState.encoders[index][target.dataset.field] = value;
+    updateSurfaceMap(configState);
+    if (target.dataset.field === 'mode') renderControlEditor();
+  }));
 }
 
 function selectControl(id) {
   selected = id;
   document.querySelectorAll('.surface-control').forEach(el => { const isSelected = el.dataset.control === id; el.dataset.selected = String(isSelected); el.setAttribute('aria-pressed', String(isSelected)); });
-  document.querySelector(`#${id}`)?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  renderControlEditor();
+  document.querySelector('#controlEditor')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
 function collectConfig() {
-  return {
-    profile: Number(document.querySelector('#profile').value),
-    sliders: Array.from(document.querySelectorAll('[data-slider]'), el => Number(el.value)),
-    encoders: Array.from({length: 4}, (_, i) => { const card = document.querySelector(`#encoder-${i}`); return Object.fromEntries(['mode', 'parameter', 'cw', 'ccw', 'press'].map(field => [field, Number(card.querySelector(`[data-field="${field}"]`).value)])); })
-  };
+  return { profile: Number(document.querySelector('#profile').value), sliders: [...configState.sliders], encoders: configState.encoders.map(mapping => ({...mapping})) };
 }
 
 function send(command, data = []) { if (!midiOut) throw new Error('No TPMidi output selected.'); midiOut.send([0xF0, MFR, ...PRODUCT, command, ...data, 0xF7]); }
@@ -425,9 +410,8 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden' && connected && !updater.busy) releaseMidiPorts();
 });
 document.querySelector('#profile').addEventListener('change', () => {
-  // Re-render so unsupported mappings cannot be saved under another DAW profile.
-  const config = collectConfig();
-  render(config);
+  configState.profile = Number(document.querySelector('#profile').value);
+  render(configState);
   status('Profile changed. Review each encoder before saving.', 'ok');
 });
 render();
