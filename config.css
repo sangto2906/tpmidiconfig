@@ -24,7 +24,7 @@ input, select { width: 100%; padding: 0 var(--space-3); }
 h1 { margin: 0; font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.25rem); letter-spacing: -0.045em; line-height: 1; overflow-wrap: anywhere; }
 .intro p { max-width: 58ch; color: var(--color-muted); line-height: 1.55; }
 .connection { align-self: end; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2); }
-.workspace { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: var(--space-6); align-items: start; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(360px, .65fr); gap: var(--space-6); align-items: start; }
 .panel { background: var(--color-surface); border: var(--rule); border-radius: var(--radius-md); padding: var(--space-5); }
 .panel h2 { font-size: var(--text-lg); letter-spacing: -0.02em; margin: 0 0 var(--space-4); }
 .surface-panel { position: sticky; top: var(--space-4); }
