@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TPMidi Config</title>
+  <link rel="stylesheet" href="config.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">TPMidi Config</div>
+      <output id="status" class="status">Connect TPMidi to begin.</output>
+    </header>
+
+    <section class="intro">
+      <div>
+        <h1>Map the surface<br>before the DAW.</h1>
+        <p>Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.</p>
+      </div>
+      <div class="connection">
+        <select id="port" aria-label="TPMidi MIDI port"><option value="">Select TPMidi...</option></select>
+        <button id="connect" type="button">Connect</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel surface-panel">
+        <h2>Temporary surface map</h2>
+        <div class="device-map" aria-label="Controller controls">
+          <div class="map-section">
+            <button class="control-token" data-control="slider-0"><span class="fader"></span>S1</button>
+            <button class="control-token" data-control="slider-1"><span class="fader"></span>S2</button>
+            <button class="control-token" data-control="slider-2"><span class="fader"></span>S3</button>
+          </div>
+          <div class="map-section encoders">
+            <button class="control-token" data-control="encoder-0"><span class="knob"></span>E1</button>
+            <button class="control-token" data-control="encoder-2"><span class="knob"></span>E3</button>
+            <button class="control-token" data-control="encoder-1"><span class="knob"></span>E2</button>
+            <button class="control-token" data-control="encoder-3"><span class="knob"></span>E4</button>
+          </div>
+        </div>
+        <p class="hint">This map becomes the interactive 3D model after component positions are identified.</p>
+      </aside>
+
+      <section class="panel configuration-panel" aria-labelledby="configuration-title">
+        <div class="panel-heading">
+          <div>
+            <h2 id="configuration-title">Configuration</h2>
+            <p class="hint">Choose a profile first, then set the controls in the same order as the hardware.</p>
+          </div>
+          <div class="actions">
+            <button id="read" type="button">Read device</button>
+            <button id="save" class="primary" type="button">Save to TPMidi</button>
+          </div>
+        </div>
+        <div class="profile-row">
+          <label>DAW profile
+            <select id="profile">
+              <option value="0">Generic MIDI</option>
+              <option value="1">FL Studio</option>
+              <option value="2">Cubase</option>
+              <option value="3">Studio One</option>
+              <option value="4">Mackie Control (Logic / Ableton fallback)</option>
+            </select>
+          </label>
+          <p id="profileHelp" class="hint"></p>
+        </div>
+        <section class="mapping-group" aria-labelledby="sliders-title">
+          <div class="group-heading"><h2 id="sliders-title">Sliders</h2><p>Assign the performance CC sent by S1, S2 and S3.</p></div>
+          <div class="cards slider-cards" id="sliderCards"></div>
+        </section>
+        <section class="mapping-group" aria-labelledby="encoders-title">
+          <div class="group-heading"><h2 id="encoders-title">Encoders</h2><p>Rotary and press mappings follow the OLED grid: E1/E2 left, E3/E4 right.</p></div>
+          <div class="cards encoder-cards" id="encoderCards"></div>
+        </section>
+      </section>
+    </section>
+    <section class="panel firmware-panel" aria-labelledby="firmware-title">
+      <div class="group-heading">
+        <h2 id="firmware-title">Firmware update</h2>
+        <p id="firmwareState">Connect TPMidi A/B to check firmware.</p>
+      </div>
+      <input id="firmwareFile" type="file" accept=".tmim" aria-label="Signed firmware file" hidden>
+      <div class="firmware-actions">
+        <button id="firmwareStatus" type="button">Check firmware</button>
+        <button id="firmwareUpdate" class="primary" type="button">Update latest release</button>
+        <button id="firmwareManual" type="button">Use manual file</button>
+        <button id="firmwareAbort" type="button">Abort upload</button>
+        <button id="firmwareReboot" type="button" disabled>Restart to test update</button>
+      </div>
+      <progress id="firmwareProgress" max="1" value="0" aria-label="Firmware update progress"></progress>
+      <div class="danger-zone">
+        <div><strong>Factory reset</strong><p class="hint">Erase saved mappings and restore the device defaults.</p></div>
+        <button id="factoryReset" class="danger" type="button">Reset configuration</button>
+      </div>
+    </section>
+  </main>
+
+<script src="firmware-update.js"></script>
+<script>
+const MFR = 0x7D, PRODUCT = [0x54, 0x4D];
+const CMD = { GET: 0x20, PROFILE: 0x21, SLIDER: 0x22, ENCODER: 0x23, SAVE: 0x24 };
+const MODE = { ACTION: 0, RELATIVE_CC: 1, NOTE: 2 };
+const RELEASE_API_URL = 'https://api.github.com/repos/sangto2906/RP2040_MIDI_CC/releases/latest';
+const profiles = ['Generic MIDI', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton fallback)'];
+const profileDefinitions = {
+  0: {
+    help: 'Generic SysEx has no bundled DAW script. The labels identify the TPMidi protocol target only.',
+    rotary: [['No rotation', 0], ['TPMidi SysEx: track navigation', 1], ['TPMidi SysEx: horizontal cursor', 2], ['TPMidi SysEx: marker navigation', 3], ['TPMidi SysEx: tempo', 4], ['TPMidi SysEx: horizontal zoom', 5], ['TPMidi SysEx: vertical zoom', 6], ['TPMidi SysEx: selected parameter', 7], ['TPMidi CC 60: transport cursor', 8]],
+    press: [['No action', 0], ['TPMidi SysEx: mixer focus', 1], ['TPMidi SysEx: tap tempo', 2], ['TPMidi SysEx: play / stop', 3], ['TPMidi SysEx: record toggle', 4], ['TPMidi SysEx: undo', 5], ['TPMidi SysEx: redo', 6]]
+  },
+  1: {
+    help: 'Actions use the bundled FL Studio MIDI script. Transport cursor moves the playhead by 24 absolute ticks per detent.',
+    rotary: [['No rotation', 0], ['FL Studio: selected track previous / next', 1], ['FL Studio: cursor left / right', 2], ['FL Studio: previous / next marker', 3], ['FL Studio: tempo down / up', 4], ['FL Studio: horizontal zoom out / in', 5], ['FL Studio: vertical zoom out / in', 6], ['FL Studio: selected-track Volume', 7], ['FL Studio: move playhead +/-24 ticks', 8], ['FL Studio: selected-track Pan', 9]],
+    press: [['No action', 0], ['FL Studio: focus Mixer', 1], ['FL Studio: Tap tempo', 2], ['FL Studio: Play / pause', 3], ['FL Studio: Record', 4], ['FL Studio: Undo', 5], ['FL Studio: Redo', 6], ['FL Studio: Stop', 7], ['FL Studio: Toggle loop', 8], ['FL Studio: Metronome', 9], ['FL Studio: Add marker', 10], ['FL Studio: Toggle snap', 11], ['FL Studio: Show Playlist', 12], ['FL Studio: Show Channel Rack', 13], ['FL Studio: Show Piano Roll', 14], ['FL Studio: Show Mixer', 15], ['FL Studio: Save project', 16], ['FL Studio: Count-in', 17], ['FL Studio: Loop recording', 18]]
+  },
+  2: {
+    help: 'Actions use the bundled Cubase MIDI Remote script. Volume/Pan, Quick Controls and Sends use relative stepping; transport cursor is signed-relative CC 60.',
+    rotary: [['No rotation', 0], ['Cubase: selected track previous / next', 1], ['Cubase: cursor left / right', 2], ['Cubase: previous / next marker', 3], ['Cubase: tempo - / + 1 BPM', 4], ['Cubase: zoom out / in', 5], ['Cubase: zoom out / in (focused editor)', 6], ['Cubase: selected-track Volume', 7], ['Cubase: transport locator previous / next', 8], ['Cubase: selected-track Pan', 9], ['Cubase: Quick Control 1', 27], ['Cubase: Quick Control 2', 28], ['Cubase: Quick Control 3', 29], ['Cubase: Quick Control 4', 30], ['Cubase: Quick Control 5', 31], ['Cubase: Quick Control 6', 32], ['Cubase: Quick Control 7', 33], ['Cubase: Quick Control 8', 34], ['Cubase: Send 1 level', 35], ['Cubase: Send 2 level', 36], ['Cubase: Send 3 level', 37], ['Cubase: Send 4 level', 38], ['Cubase: Send 5 level', 39], ['Cubase: Send 6 level', 40], ['Cubase: Send 7 level', 41], ['Cubase: Send 8 level', 42]],
+    press: [['No action', 0], ['Cubase: Start / Stop', 3], ['Cubase: Record', 4], ['Cubase: Undo', 5], ['Cubase: Redo', 6], ['Cubase: Stop', 7], ['Cubase: Toggle Cycle', 8], ['Cubase: Toggle Metronome', 9], ['Cubase: Insert Marker', 10], ['Cubase: Save project', 16], ['Cubase: Toggle selected-track Mute', 19], ['Cubase: Toggle selected-track Solo', 20], ['Cubase: Toggle selected-track Record Enable', 21], ['Cubase: Return to Zero', 22], ['Cubase: Go to End', 23], ['Cubase: Toggle Auto Punch In', 24], ['Cubase: Toggle Auto Punch Out', 25], ['Cubase: Open / close Preset Browser', 26]]
+  },
+  3: {
+    help: 'Actions use the bundled Studio One surface. Volume/Pan follow the selected mixer channel; transport cursor is relative CC 60 on TPMidi cable 0.',
+    rotary: [['No rotation', 0], ['Studio One: selected track previous / next', 1], ['Studio One: cursor left / right', 2], ['Studio One: previous / next marker', 3], ['Studio One: horizontal zoom out / in', 5], ['Studio One: vertical zoom out / in', 6], ['Studio One: selected-track Volume', 7], ['Studio One: move transport cursor', 8], ['Studio One: selected-track Pan', 9]],
+    press: [['No action', 0], ['Studio One: Toggle Start', 3], ['Studio One: Record', 4], ['Studio One: Undo', 5], ['Studio One: Redo', 6]]
+  },
+  4: {
+    help: 'Minimal Mackie Control fallback. It is limited to standard MCU functions that do not require a custom script.',
+    rotary: [['No rotation', 0], ['Mackie Control: Channel Left / Right', 1], ['Mackie Control: Cursor Left / Right', 2], ['Mackie Control: jog transport cursor', 8]],
+    press: [['No action', 0], ['Mackie Control: Play', 3], ['Mackie Control: Record', 4], ['Mackie Control: Undo', 5], ['Mackie Control: Redo', 6]]
+  }
+};
+let midiAccess, midiOut, midiIn, connected = false, selected = 'slider-0', waiter;
+const updater = new TPMidiUpdater(frame => {
+  if(!connected || !midiOut) throw new Error('Connect TPMidi first.');
+  midiOut.send(frame);
+}, state => {
+  document.querySelector('#firmwareState').textContent = `Slot ${state.slot===0?'A':'B'} | release ${state.releases[state.slot]} | pending ${state.pending===255?'none':state.pending===0?'A':'B'} | ${state.healthy?'config OK':'config error'} | error ${state.error}`;
+  document.querySelector('#firmwareReboot').disabled=state.pending===255;
+});
+
+const status = (message, state = '') => { const el = document.querySelector('#status'); el.textContent = message; el.className = `status ${state}`; };
+const optionsFor = options => value => options.map(([label, id]) => `<option value="${id}" ${Number(value) === id ? 'selected' : ''}>${label}</option>`).join('');
+const selectedProfile = () => profileDefinitions[Number(document.querySelector('#profile').value)] || profileDefinitions[0];
+const rotaryOptions = value => optionsFor(selectedProfile().rotary)(value);
+const pressOptions = value => optionsFor(selectedProfile().press)(value);
+const ccOptions = value => Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>CC ${n}</option>`).join('');
+
+function render(config = { profile: 0, sliders: [1, 11, 14], encoders: Array.from({length: 4}, () => ({mode: 0, parameter: 0, cw: 0, ccw: 0, press: 0})) }) {
+  document.querySelector('#profile').value = config.profile;
+  document.querySelector('#profileHelp').textContent = selectedProfile().help;
+  document.querySelector('#sliderCards').innerHTML = config.sliders.map((cc, i) => `<article class="card" id="slider-${i}"><h3>Slider S${i + 1}</h3><label>Control Change<select data-slider="${i}">${ccOptions(cc)}</select></label></article>`).join('');
+  const encoderOrder = [0, 2, 1, 3];
+  document.querySelector('#encoderCards').innerHTML = encoderOrder.map(i => { const mapping = config.encoders[i]; return `
+    <article class="card" id="encoder-${i}">
+      <h3>Encoder E${i + 1}</h3>
+      <div class="fields">
+        <label class="full">Message type<select data-encoder="${i}" data-field="mode"><option value="0" ${mapping.mode === 0 ? 'selected' : ''}>DAW action (SysEx / Mackie)</option><option value="1" ${mapping.mode === 1 ? 'selected' : ''}>Relative CC</option><option value="2" ${mapping.mode === 2 ? 'selected' : ''}>MIDI notes</option></select></label>
+        <label data-role="parameter">Rotary target<select data-encoder="${i}" data-field="parameter">${rotaryOptions(mapping.parameter)}</select></label>
+        <label data-role="cw" class="hidden">Reserved<select data-encoder="${i}" data-field="cw"><option value="0">0</option></select></label>
+        <label data-role="ccw" class="hidden">Reserved<select data-encoder="${i}" data-field="ccw"><option value="0">0</option></select></label>
+        <label data-role="press" class="full">Press action<select data-encoder="${i}" data-field="press">${pressOptions(mapping.press)}</select></label>
+      </div>
+    </article>`; }).join('');
+  document.querySelectorAll('[data-encoder]').forEach(el => el.addEventListener('change', updateEncoderFields));
+  updateEncoderFields(); selectControl(selected);
+}
+
+function updateEncoderFields() {
+  for (let i = 0; i < 4; i++) {
+    const card = document.querySelector(`#encoder-${i}`), mode = Number(card.querySelector('[data-field="mode"]').value);
+    const set = (field, label, options, disabled = false) => { const select = card.querySelector(`[data-field="${field}"]`); const value = select.value; select.innerHTML = options(value); select.disabled = disabled; select.parentElement.firstChild.textContent = label; };
+    if (mode === MODE.ACTION) {
+      set('parameter', 'Rotary target', rotaryOptions); set('cw', 'Reserved', () => '<option value="0">0</option>', true); set('ccw', 'Reserved', () => '<option value="0">0</option>', true); set('press', 'Press action', pressOptions);
+    } else if (mode === MODE.RELATIVE_CC) {
+      set('parameter', 'CC number', ccOptions); set('cw', 'Reserved', () => '<option value="0">0</option>', true); set('ccw', 'Reserved', () => '<option value="0">0</option>', true); set('press', 'Unused', pressOptions, true);
+    } else {
+      const notes = value => Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>Note ${n}</option>`).join('');
+      set('parameter', 'Rotary disabled', () => '<option value="0">0</option>', true); set('cw', 'Rotation disabled', () => '<option value="0">0</option>', true); set('ccw', 'Reserved', () => '<option value="0">0</option>', true); set('press', 'Press note', notes);
+    }
+  }
+}
+
+function selectControl(id) {
+  selected = id;
+  document.querySelectorAll('.control-token').forEach(el => el.dataset.selected = String(el.dataset.control === id));
+  document.querySelector(`#${id}`)?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+function collectConfig() {
+  return {
+    profile: Number(document.querySelector('#profile').value),
+    sliders: Array.from(document.querySelectorAll('[data-slider]'), el => Number(el.value)),
+    encoders: Array.from({length: 4}, (_, i) => { const card = document.querySelector(`#encoder-${i}`); return Object.fromEntries(['mode', 'parameter', 'cw', 'ccw', 'press'].map(field => [field, Number(card.querySelector(`[data-field="${field}"]`).value)])); })
+  };
+}
+
+function send(command, data = []) { if (!midiOut) throw new Error('No TPMidi output selected.'); midiOut.send([0xF0, MFR, ...PRODUCT, command, ...data, 0xF7]); }
+function waitFor(command, timeout = 1200) { return new Promise(resolve => { const timer = setTimeout(() => { waiter = null; resolve(null); }, timeout); waiter = payload => { if (payload[3] === command) { clearTimeout(timer); waiter = null; resolve(payload); } }; }); }
+function onMidiMessage(event) { const data = Array.from(event.data); if (data[0] !== 0xF0 || data.at(-1) !== 0xF7 || data[1] !== MFR || data[2] !== PRODUCT[0] || data[3] !== PRODUCT[1]) return; updater.receive(data); waiter?.(data.slice(1, -1)); }
+async function request(command, data = []) { const reply = waitFor(command); send(command, data); return reply; }
+
+async function populatePorts() {
+  if (!midiAccess) midiAccess = await navigator.requestMIDIAccess({sysex: true});
+  const select = document.querySelector('#port'), previous = select.value;
+  select.innerHTML = '<option value="">Select TPMidi...</option>';
+  for (const output of midiAccess.outputs.values()) {
+    if (output.name !== 'TPMidi' && output.name !== 'TPMidi DAW') continue;
+    const option = new Option(output.name, output.id, false, previous ? output.id === previous : true);
+    select.add(option);
+  }
+}
+async function requestMidiPermission() {
+  await populatePorts();
+  // Enumeration and permission do not open MIDI endpoints. Drop this handle
+  // immediately; connect() obtains a new one only when the user connects.
+  midiAccess = null;
+  status('Select TPMidi then Connect.', 'ok');
+}
+function releaseMidiPorts() {
+  const ports = [...new Set([midiIn, midiOut].filter(Boolean))];
+  updater.disconnect();
+  waiter = null;
+  midiIn = midiOut = null; connected = false;
+  // Drop MIDIAccess as well as the two open ports. Chromium otherwise keeps
+  // its MIDI service session alive for the page on some Windows drivers.
+  midiAccess = null;
+  for (const port of ports) {
+    port.onmidimessage = null;
+    try { port.clear?.(); } catch (_) { /* Port may already be disconnected. */ }
+  }
+  return ports.map(port => Promise.resolve(port.close()).catch(() => {}));
+}
+function setConnectionControls(isConnected) {
+  document.querySelector('#read').disabled = !isConnected;
+  document.querySelector('#save').disabled = !isConnected;
+  for (const id of ['firmwareStatus', 'firmwareUpdate', 'firmwareManual', 'firmwareAbort', 'factoryReset']) {
+    document.querySelector(`#${id}`).disabled = !isConnected;
+  }
+  if (!isConnected) document.querySelector('#firmwareReboot').disabled = true;
+}
+async function disconnect() {
+  const closing = releaseMidiPorts();
+  await Promise.all(closing);
+  document.querySelector('#connect').textContent = 'Connect';
+  setConnectionControls(false);
+  status('Disconnected. MIDI ports released.', 'ok');
+}
+async function connect() {
+  try {
+    if (connected) { await disconnect(); return; }
+    if (!connected) {
+      await populatePorts(); const id = document.querySelector('#port').value; midiOut = midiAccess.outputs.get(id); midiIn = [...midiAccess.inputs.values()].find(port => port.name === midiOut?.name) || [...midiAccess.inputs.values()].find(port => port.name === 'TPMidi DAW') || [...midiAccess.inputs.values()][0];
+      if (!midiOut || !midiIn) throw new Error('TPMidi input/output was not found.');
+      // Do not rely on assigning onmidimessage to implicitly open an endpoint:
+      // Chromium's Windows MIDI backend can leave that input closed.
+      await Promise.all([midiOut.open(), midiIn.open()]);
+      midiIn.onmidimessage = onMidiMessage; connected = true; document.querySelector('#connect').textContent = 'Disconnect'; setConnectionControls(true); status('Connected. Reading device...', 'ok'); await readDevice();
+    } else { midiIn.onmidimessage = null; midiIn = midiOut = null; connected = false; document.querySelector('#connect').textContent = 'Connect'; status('Disconnected.'); }
+  } catch (error) {
+    if (!connected) await Promise.all(releaseMidiPorts());
+    setConnectionControls(false);
+    document.querySelector('#connect').textContent = 'Connect';
+    status(error.message, 'error');
+  }
+}
+async function readDevice() {
+  if (!connected) return status('Connect TPMidi first.', 'error');
+  const reply = await request(CMD.GET); if (!reply || reply.length < 29) return status('No valid configuration reply.', 'error');
+  const config = {profile: reply[5], sliders: reply.slice(6, 9), encoders: []}; let offset = 9;
+  for (let i = 0; i < 4; i++) { config.encoders.push({mode: reply[offset++], parameter: reply[offset++], cw: reply[offset++], ccw: reply[offset++], press: reply[offset++]}); }
+  render(config); status(`Loaded ${profiles[config.profile]} profile.`, 'ok');
+}
+async function saveDevice() {
+  if (!connected) return status('Connect TPMidi first.', 'error');
+  const button = document.querySelector('#save'); button.disabled = true;
+  try { const config = collectConfig();
+    for (const [command, data] of [[CMD.PROFILE, [config.profile]], ...config.sliders.map((cc, i) => [CMD.SLIDER, [i, cc]]), ...config.encoders.map((m, i) => [CMD.ENCODER, [i, m.mode, m.parameter, m.cw, m.ccw, m.press]]), [CMD.SAVE, []]]) {
+      const reply = await request(command, data); if (!reply || reply[4] !== 0) throw new Error(`Device rejected command 0x${command.toString(16)}.`);
+    }
+    status('Saved to TPMidi flash.', 'ok');
+  } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
+}
+
+document.querySelectorAll('.control-token').forEach(el => el.addEventListener('click', () => selectControl(el.dataset.control)));
+const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;};
+document.querySelector('#firmwareStatus').onclick=()=>updater.request(0x40).catch(firmwareError);
+async function startFirmwareUpdate(file) {
+  const button=document.querySelector('#firmwareUpdate');
+  button.disabled=true;document.querySelector('#firmwareProgress').value=0;
+  document.querySelector('#firmwareState').textContent=`Preparing ${file.name}...`;
+  try {
+    await updater.upload(file,value=>{
+      document.querySelector('#firmwareProgress').value=value;
+      document.querySelector('#firmwareState').textContent=`Updating ${Math.round(value*100)}%...`;
+    });
+    document.querySelector('#firmwareState').textContent='Firmware verified. Select "Restart to test update" to boot the new slot.';
+  } catch(error) {firmwareError(error);}
+  finally {button.disabled=false;}
+}
+function firmwareProgress(value) {
+  document.querySelector('#firmwareProgress').value=value;
+  document.querySelector('#firmwareState').textContent=`Updating ${Math.round(value*100)}%...`;
+}
+async function startLatestFirmwareUpdate() {
+  const button=document.querySelector('#firmwareUpdate');
+  button.disabled=true;document.querySelector('#firmwareProgress').value=0;
+  try {
+    document.querySelector('#firmwareState').textContent='Reading TPMidi update status...';
+    const state=await updater.request(0x40);
+    if(!state.healthy || state.pending!==255) throw new Error('TPMidi must be healthy with no pending update.');
+    const target=state.slot===0?'B':'A';
+    document.querySelector('#firmwareState').textContent=`Finding latest release for slot ${target}...`;
+    const releaseResponse=await fetch(RELEASE_API_URL,{cache:'no-store'});
+    if(!releaseResponse.ok) throw new Error(`Cannot check latest release (${releaseResponse.status}).`);
+    const release=await releaseResponse.json();
+    if(!Array.isArray(release.assets)) throw new Error('Latest GitHub Release has no firmware assets.');
+    const asset=release.assets.find(item => new RegExp(`^TPMidi_release_(\\d+)_${target}\\.tmim$`).test(item.name));
+    if(!asset) throw new Error(`Latest GitHub Release is missing its slot ${target} image.`);
+    const response=await fetch(asset.browser_download_url,{cache:'no-store'});
+    if(!response.ok) throw new Error(`Firmware download failed (${response.status}).`);
+    const bytes=new Uint8Array(await response.arrayBuffer());
+    if(bytes.length<110 || String.fromCharCode(...bytes.slice(0,4))!=='TMIM') throw new Error('Downloaded file is not a TPMidi update.');
+    const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+    const releaseNumber=view.getUint32(6,true);
+    if(bytes[5] !== (target==='A'?0:1)) throw new Error('Release asset targets the wrong slot.');
+    if(releaseNumber<=Math.max(...state.releases)) throw new Error(`TPMidi already has release ${Math.max(...state.releases)} or newer.`);
+    document.querySelector('#firmwareState').textContent=`Downloading release ${releaseNumber}...`;
+    await updater.uploadBytes(bytes,firmwareProgress);
+    document.querySelector('#firmwareState').textContent=`Release ${releaseNumber} verified. Select "Restart to test update" to boot it.`;
+  } catch(error) {firmwareError(error);}
+  finally {button.disabled=false;}
+}
+document.querySelector('#firmwareUpdate').onclick=startLatestFirmwareUpdate;
+document.querySelector('#firmwareManual').onclick=()=>document.querySelector('#firmwareFile').click();
+document.querySelector('#firmwareFile').onchange=event=>{
+  const file=event.target.files[0];event.target.value='';if(file) startFirmwareUpdate(file);
+};
+document.querySelector('#firmwareAbort').onclick=async()=>{
+  updater.cancelled=true;
+  while(updater.busy) await new Promise(resolve=>setTimeout(resolve,50));
+  updater.request(0x44).catch(firmwareError);
+};
+document.querySelector('#firmwareReboot').onclick=()=>{
+  if(confirm('Restart TPMidi to test the new firmware?')) updater.request(0x45,new TextEncoder().encode('BOOT')).catch(firmwareError);
+};
+document.querySelector('#factoryReset').onclick=async()=>{
+  if(!confirm('Erase your saved mappings and restore factory defaults?')) return;
+  try {await updater.request(0x46,new TextEncoder().encode('RESET'));await readDevice();}
+  catch(error) {firmwareError(error);}
+};
+document.querySelector('#connect').addEventListener('click', connect); document.querySelector('#read').addEventListener('click', readDevice); document.querySelector('#save').addEventListener('click', saveDevice);
+window.addEventListener('pagehide', () => { releaseMidiPorts(); });
+window.addEventListener('unload', () => { releaseMidiPorts(); });
+document.addEventListener('visibilitychange', () => {
+  // Releasing on tab switch lets a DAW acquire TPMidi without requiring the
+  // user to close this page. Never interrupt a signed firmware transfer.
+  if (document.visibilityState === 'hidden' && connected && !updater.busy) releaseMidiPorts();
+});
+document.querySelector('#profile').addEventListener('change', () => {
+  // Re-render so unsupported mappings cannot be saved under another DAW profile.
+  const config = collectConfig();
+  render(config);
+  status('Profile changed. Review each encoder before saving.', 'ok');
+});
+render();
+setConnectionControls(false);
+if (navigator.requestMIDIAccess) requestMidiPermission().catch(() => status('Web MIDI SysEx permission is required.', 'error')); else status('This browser does not support Web MIDI.', 'error');
+</script>
+</body>
+</html>
