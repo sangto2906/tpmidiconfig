@@ -26,21 +26,76 @@
 
     <section class="workspace">
       <aside class="panel surface-panel">
-        <h2>Temporary surface map</h2>
-        <div class="device-map" aria-label="Controller controls">
-          <div class="map-section">
-            <button class="control-token" data-control="slider-0"><span class="fader"></span>S1</button>
-            <button class="control-token" data-control="slider-1"><span class="fader"></span>S2</button>
-            <button class="control-token" data-control="slider-2"><span class="fader"></span>S3</button>
-          </div>
-          <div class="map-section encoders">
-            <button class="control-token" data-control="encoder-0"><span class="knob"></span>E1</button>
-            <button class="control-token" data-control="encoder-2"><span class="knob"></span>E3</button>
-            <button class="control-token" data-control="encoder-1"><span class="knob"></span>E2</button>
-            <button class="control-token" data-control="encoder-3"><span class="knob"></span>E4</button>
-          </div>
+        <h2>Controller surface</h2>
+        <div class="device-map">
+          <svg class="surface-map" viewBox="0 0 560 520" role="group" aria-labelledby="surface-map-title surface-map-description">
+            <title id="surface-map-title">TPMidi controller surface</title>
+            <desc id="surface-map-description">Select a slider or encoder to configure its mapping.</desc>
+            <rect class="device-body" x="10" y="10" width="540" height="500" rx="12" />
+            <rect class="display-bezel" x="356" y="58" width="144" height="98" rx="4" />
+            <rect class="display-screen" x="368" y="70" width="120" height="74" rx="2" />
+            <text class="display-wordmark" x="428" y="112" text-anchor="middle">TPMidi</text>
+
+            <g class="surface-control" data-control="slider-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select slider S1">
+              <rect class="control-hit" x="54" y="102" width="68" height="320" rx="12" />
+              <rect class="slider-track" x="80" y="124" width="16" height="266" rx="8" />
+              <rect class="slider-slot" x="84" y="130" width="8" height="254" rx="4" />
+              <rect class="slider-cap control-outline" x="72" y="238" width="32" height="48" rx="8" />
+              <text class="surface-name" x="88" y="426" text-anchor="middle">S1</text>
+              <text class="surface-value" data-surface-label="slider-0" x="88" y="446" text-anchor="middle">CC 1</text>
+            </g>
+            <g class="surface-control" data-control="slider-1" role="button" tabindex="0" aria-pressed="false" aria-label="Select slider S2">
+              <rect class="control-hit" x="156" y="102" width="68" height="320" rx="12" />
+              <rect class="slider-track" x="182" y="124" width="16" height="266" rx="8" />
+              <rect class="slider-slot" x="186" y="130" width="8" height="254" rx="4" />
+              <rect class="slider-cap control-outline" x="174" y="238" width="32" height="48" rx="8" />
+              <text class="surface-name" x="190" y="426" text-anchor="middle">S2</text>
+              <text class="surface-value" data-surface-label="slider-1" x="190" y="446" text-anchor="middle">CC 11</text>
+            </g>
+            <g class="surface-control" data-control="slider-2" role="button" tabindex="0" aria-pressed="false" aria-label="Select slider S3">
+              <rect class="control-hit" x="258" y="102" width="68" height="320" rx="12" />
+              <rect class="slider-track" x="284" y="124" width="16" height="266" rx="8" />
+              <rect class="slider-slot" x="288" y="130" width="8" height="254" rx="4" />
+              <rect class="slider-cap control-outline" x="276" y="238" width="32" height="48" rx="8" />
+              <text class="surface-name" x="292" y="426" text-anchor="middle">S3</text>
+              <text class="surface-value" data-surface-label="slider-2" x="292" y="446" text-anchor="middle">CC 14</text>
+            </g>
+
+            <g class="surface-control" data-control="encoder-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E1">
+              <circle class="control-hit" cx="394" cy="252" r="48" />
+              <circle class="knob-rim" cx="394" cy="252" r="35" />
+              <circle class="knob-face control-outline" cx="394" cy="252" r="25" />
+              <path class="knob-indicator" d="M394 232v-13" />
+              <text class="surface-name" x="394" y="312" text-anchor="middle">E1</text>
+              <text class="surface-value" data-surface-label="encoder-0" x="394" y="330" text-anchor="middle">No target</text>
+            </g>
+            <g class="surface-control" data-control="encoder-2" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E3">
+              <circle class="control-hit" cx="484" cy="252" r="48" />
+              <circle class="knob-rim" cx="484" cy="252" r="35" />
+              <circle class="knob-face control-outline" cx="484" cy="252" r="25" />
+              <path class="knob-indicator" d="M484 232v-13" />
+              <text class="surface-name" x="484" y="312" text-anchor="middle">E3</text>
+              <text class="surface-value" data-surface-label="encoder-2" x="484" y="330" text-anchor="middle">No target</text>
+            </g>
+            <g class="surface-control" data-control="encoder-1" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E2">
+              <circle class="control-hit" cx="394" cy="382" r="48" />
+              <circle class="knob-rim" cx="394" cy="382" r="35" />
+              <circle class="knob-face control-outline" cx="394" cy="382" r="25" />
+              <path class="knob-indicator" d="M394 362v-13" />
+              <text class="surface-name" x="394" y="442" text-anchor="middle">E2</text>
+              <text class="surface-value" data-surface-label="encoder-1" x="394" y="460" text-anchor="middle">No target</text>
+            </g>
+            <g class="surface-control" data-control="encoder-3" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E4">
+              <circle class="control-hit" cx="484" cy="382" r="48" />
+              <circle class="knob-rim" cx="484" cy="382" r="35" />
+              <circle class="knob-face control-outline" cx="484" cy="382" r="25" />
+              <path class="knob-indicator" d="M484 362v-13" />
+              <text class="surface-name" x="484" y="442" text-anchor="middle">E4</text>
+              <text class="surface-value" data-surface-label="encoder-3" x="484" y="460" text-anchor="middle">No target</text>
+            </g>
+          </svg>
         </div>
-        <p class="hint">This map becomes the interactive 3D model after component positions are identified.</p>
+        <p class="hint">Select a control to jump to its mapping. Labels update from the current configuration.</p>
       </aside>
 
       <section class="panel configuration-panel" aria-labelledby="configuration-title">
@@ -163,8 +218,16 @@ function render(config = { profile: 0, sliders: [1, 11, 14], encoders: Array.fro
         <label data-role="press" class="full">Press action<select data-encoder="${i}" data-field="press">${pressOptions(mapping.press)}</select></label>
       </div>
     </article>`; }).join('');
-  document.querySelectorAll('[data-encoder]').forEach(el => el.addEventListener('change', updateEncoderFields));
-  updateEncoderFields(); selectControl(selected);
+  document.querySelectorAll('[data-encoder]').forEach(el => el.addEventListener('change', () => { updateEncoderFields(); updateSurfaceMap(collectConfig()); }));
+  updateEncoderFields(); updateSurfaceMap(config); selectControl(selected);
+}
+
+function updateSurfaceMap(config) {
+  config.sliders.forEach((cc, i) => { document.querySelector(`[data-surface-label="slider-${i}"]`).textContent = `CC ${cc}`; });
+  config.encoders.forEach((mapping, i) => {
+    const label = mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : (selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0].split(': ').at(-1) || 'No target');
+    document.querySelector(`[data-surface-label="encoder-${i}"]`).textContent = label.length > 14 ? `${label.slice(0, 13)}…` : label;
+  });
 }
 
 function updateEncoderFields() {
@@ -184,7 +247,7 @@ function updateEncoderFields() {
 
 function selectControl(id) {
   selected = id;
-  document.querySelectorAll('.control-token').forEach(el => el.dataset.selected = String(el.dataset.control === id));
+  document.querySelectorAll('.surface-control').forEach(el => { const isSelected = el.dataset.control === id; el.dataset.selected = String(isSelected); el.setAttribute('aria-pressed', String(isSelected)); });
   document.querySelector(`#${id}`)?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
@@ -283,7 +346,10 @@ async function saveDevice() {
   } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
 }
 
-document.querySelectorAll('.control-token').forEach(el => el.addEventListener('click', () => selectControl(el.dataset.control)));
+document.querySelectorAll('.surface-control').forEach(el => {
+  el.addEventListener('click', () => selectControl(el.dataset.control));
+  el.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectControl(el.dataset.control); } });
+});
 const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;};
 document.querySelector('#firmwareStatus').onclick=()=>updater.request(0x40).catch(firmwareError);
 async function startFirmwareUpdate(file) {
