@@ -18,6 +18,10 @@
         <h1>Map the surface<br>before the DAW.</h1>
         <p>Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.</p>
       </div>
+      <div class="connection">
+        <label>TPMidi MIDI port<select id="port"><option value="">Select TPMidi...</option></select></label>
+        <button id="connect" type="button">Connect</button>
+      </div>
     </section>
 
     <section class="workspace">
@@ -94,10 +98,6 @@
             </g>
           </svg>
         </div>
-        <div class="surface-connection">
-          <label>TPMidi MIDI port<select id="port"><option value="">Select TPMidi...</option></select></label>
-          <button id="connect" type="button">Connect</button>
-        </div>
         <p class="hint">Select a control to jump to its mapping. Labels update from the current configuration.</p>
       </aside>
 
@@ -130,13 +130,12 @@
     <section class="panel firmware-panel" aria-labelledby="firmware-title">
       <div class="group-heading">
         <h2 id="firmware-title">Firmware update</h2>
-        <p id="firmwareState">Connect TPMidi A/B to check firmware.</p>
+        <p id="firmwareState">Connect TPMidi to read the active slot and release.</p>
       </div>
       <input id="firmwareFile" type="file" accept=".tmim" aria-label="Signed firmware file" hidden>
       <div class="firmware-actions">
-        <button id="firmwareStatus" type="button">Check firmware</button>
         <button id="firmwareUpdate" class="primary" type="button">Update latest release</button>
-        <button id="firmwareManual" type="button">Use manual file</button>
+        <button id="firmwareManual" type="button">Use manual file (recovery)</button>
         <button id="firmwareAbort" type="button">Abort upload</button>
         <button id="firmwareReboot" type="button" disabled>Restart to test update</button>
       </div>
@@ -188,7 +187,7 @@ const updater = new TPMidiUpdater(frame => {
   if(!connected || !midiOut) throw new Error('Connect TPMidi first.');
   midiOut.send(frame);
 }, state => {
-  document.querySelector('#firmwareState').textContent = `Slot ${state.slot===0?'A':'B'} | release ${state.releases[state.slot]} | pending ${state.pending===255?'none':state.pending===0?'A':'B'} | ${state.healthy?'config OK':'config error'} | error ${state.error}`;
+  renderFirmwareStatus(state);
   document.querySelector('#firmwareReboot').disabled=state.pending===255;
 });
 
@@ -214,16 +213,20 @@ function updateLegacySurfaceMap(config) {
   });
 }
 
-function rotaryLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? 'Rotation disabled' : (selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0] || 'No rotation'); }
-function pressLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? 'Unused' : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : (selectedProfile().press.find(([, value]) => value === mapping.press)?.[0] || 'No action'); }
+function conciseAction(label, fallback) {
+  const action = (label || fallback).split(': ').at(-1);
+  return action === 'No rotation' || action === 'No action' ? 'Off' : action;
+}
+function rotaryLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? 'Disabled' : conciseAction(selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0], 'Off'); }
+function pressLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? 'Unused' : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : conciseAction(selectedProfile().press.find(([, value]) => value === mapping.press)?.[0], 'Off'); }
 function setSurfaceDetail(index, lines) {
-  const text = document.querySelector(`[data-surface-detail="encoder-${index}"]`), wordsPerLine = 18;
+  const text = document.querySelector(`[data-surface-detail="encoder-${index}"]`), wordsPerLine = 10;
   text.replaceChildren();
   lines.flatMap(line => {
     const words = line.split(' '), wrapped = []; let current = '';
     for (const word of words) { if (`${current} ${word}`.trim().length > wordsPerLine && current) { wrapped.push(current); current = word; } else current = `${current} ${word}`.trim(); }
     if (current) wrapped.push(current); return wrapped;
-  }).forEach((line, i) => { const span = document.createElementNS('http://www.w3.org/2000/svg', 'tspan'); span.setAttribute('x', text.getAttribute('x')); span.setAttribute('dy', i ? '11' : '0'); span.textContent = line; text.append(span); });
+  }).forEach((line, i) => { const span = document.createElementNS('http://www.w3.org/2000/svg', 'tspan'); span.setAttribute('x', text.getAttribute('x')); span.setAttribute('dy', i ? '12' : '0'); span.textContent = line; text.append(span); });
 }
 function setOled(line1, line2, progress = 0) {
   document.querySelector('#oledPrimary').textContent = line1;
@@ -306,7 +309,7 @@ function releaseMidiPorts() {
 function setConnectionControls(isConnected) {
   document.querySelector('#read').disabled = !isConnected;
   document.querySelector('#save').disabled = !isConnected;
-  for (const id of ['firmwareStatus', 'firmwareUpdate', 'firmwareManual', 'firmwareAbort', 'factoryReset']) {
+  for (const id of ['firmwareUpdate', 'firmwareManual', 'firmwareAbort', 'factoryReset']) {
     document.querySelector(`#${id}`).disabled = !isConnected;
   }
   if (!isConnected) document.querySelector('#firmwareReboot').disabled = true;
@@ -327,7 +330,7 @@ async function connect() {
       // Do not rely on assigning onmidimessage to implicitly open an endpoint:
       // Chromium's Windows MIDI backend can leave that input closed.
       await Promise.all([midiOut.open(), midiIn.open()]);
-      midiIn.onmidimessage = onMidiMessage; connected = true; document.querySelector('#connect').textContent = 'Disconnect'; setConnectionControls(true); status('Connected. Reading device...', 'ok'); await readDevice();
+      midiIn.onmidimessage = onMidiMessage; connected = true; document.querySelector('#connect').textContent = 'Disconnect'; setConnectionControls(true); status('Connected. Reading device...', 'ok'); await readDevice(); await refreshFirmwareStatus();
     } else { midiIn.onmidimessage = null; midiIn = midiOut = null; connected = false; document.querySelector('#connect').textContent = 'Connect'; status('Disconnected.'); }
   } catch (error) {
     if (!connected) await Promise.all(releaseMidiPorts());
@@ -359,7 +362,27 @@ document.querySelectorAll('.surface-control').forEach(el => {
   el.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectControl(el.dataset.control); } });
 });
 const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;setOled('Update failed', 'Check firmware state');};
-document.querySelector('#firmwareStatus').onclick=()=>updater.request(0x40).catch(firmwareError);
+function renderFirmwareStatus(state) {
+  const activeSlot = state.slot === 0 ? 'A' : 'B';
+  const activeRelease = state.releases[state.slot];
+  if (state.error) {
+    document.querySelector('#firmwareState').textContent = `Firmware reports error ${state.error}. Resolve it before updating.`;
+    return;
+  }
+  if (!state.healthy) {
+    document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Firmware state is not ready for an update.`;
+    return;
+  }
+  if (state.pending !== 255) {
+    document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Slot ${state.pending === 0 ? 'A' : 'B'} is waiting for a test restart.`;
+    return;
+  }
+  document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Update latest release will automatically use the other slot.`;
+}
+async function refreshFirmwareStatus() {
+  try { await updater.request(0x40); }
+  catch (error) { document.querySelector('#firmwareState').textContent = `Could not read firmware status: ${error.message}`; }
+}
 async function startFirmwareUpdate(file) {
   const button=document.querySelector('#firmwareUpdate');
   button.disabled=true;document.querySelector('#firmwareProgress').value=0;
