@@ -240,7 +240,6 @@ function setSurfaceDetail(index, lines) {
     const span = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
     span.setAttribute('x', text.getAttribute('x'));
     span.setAttribute('dy', i ? '14' : '0');
-    if (line.length > 22) { span.setAttribute('textLength', '190'); span.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
     span.textContent = line;
     text.append(span);
   });
