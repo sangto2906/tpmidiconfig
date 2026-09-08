@@ -18,47 +18,46 @@
         <h1>Map the surface<br>before the DAW.</h1>
         <p>Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.</p>
       </div>
-      <div class="connection">
-        <select id="port" aria-label="TPMidi MIDI port"><option value="">Select TPMidi...</option></select>
-        <button id="connect" type="button">Connect</button>
-      </div>
     </section>
 
     <section class="workspace">
       <aside class="panel surface-panel">
         <h2>Controller surface</h2>
         <div class="device-map">
-          <svg class="surface-map" viewBox="0 0 560 520" role="group" aria-labelledby="surface-map-title surface-map-description">
+          <svg class="surface-map" viewBox="0 0 560 620" role="group" aria-labelledby="surface-map-title surface-map-description">
             <title id="surface-map-title">TPMidi controller surface</title>
             <desc id="surface-map-description">Select a slider or encoder to configure its mapping.</desc>
-            <rect class="device-body" x="10" y="10" width="540" height="500" rx="12" />
+            <rect class="device-body" x="10" y="10" width="540" height="600" rx="12" />
             <rect class="display-bezel" x="356" y="58" width="144" height="98" rx="4" />
             <rect class="display-screen" x="368" y="70" width="120" height="74" rx="2" />
-            <text class="display-wordmark" x="428" y="112" text-anchor="middle">TPMidi</text>
+            <text class="oled-primary" id="oledPrimary" x="428" y="102" text-anchor="middle">S1 · CC 1</text>
+            <text class="oled-secondary" id="oledSecondary" x="428" y="122" text-anchor="middle">Ready to configure</text>
+            <rect class="oled-progress-track" x="380" y="130" width="96" height="5" rx="2.5" />
+            <rect class="oled-progress-fill" id="oledProgressFill" x="380" y="130" width="0" height="5" rx="2.5" />
 
             <g class="surface-control" data-control="slider-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select slider S1">
               <rect class="control-hit" x="54" y="102" width="68" height="320" rx="12" />
-              <rect class="slider-track" x="80" y="124" width="16" height="266" rx="8" />
-              <rect class="slider-slot" x="84" y="130" width="8" height="254" rx="4" />
+              <rect class="slider-track" x="80" y="124" width="16" height="306" rx="8" />
+              <rect class="slider-slot" x="84" y="130" width="8" height="294" rx="4" />
               <rect class="slider-cap control-outline" x="72" y="238" width="32" height="48" rx="8" />
-              <text class="surface-name" x="88" y="426" text-anchor="middle">S1</text>
-              <text class="surface-value" data-surface-label="slider-0" x="88" y="446" text-anchor="middle">CC 1</text>
+              <text class="surface-name" x="88" y="468" text-anchor="middle">S1</text>
+              <text class="surface-value" data-surface-label="slider-0" x="88" y="488" text-anchor="middle">CC 1</text>
             </g>
             <g class="surface-control" data-control="slider-1" role="button" tabindex="0" aria-pressed="false" aria-label="Select slider S2">
               <rect class="control-hit" x="156" y="102" width="68" height="320" rx="12" />
-              <rect class="slider-track" x="182" y="124" width="16" height="266" rx="8" />
-              <rect class="slider-slot" x="186" y="130" width="8" height="254" rx="4" />
+              <rect class="slider-track" x="182" y="124" width="16" height="306" rx="8" />
+              <rect class="slider-slot" x="186" y="130" width="8" height="294" rx="4" />
               <rect class="slider-cap control-outline" x="174" y="238" width="32" height="48" rx="8" />
-              <text class="surface-name" x="190" y="426" text-anchor="middle">S2</text>
-              <text class="surface-value" data-surface-label="slider-1" x="190" y="446" text-anchor="middle">CC 11</text>
+              <text class="surface-name" x="190" y="468" text-anchor="middle">S2</text>
+              <text class="surface-value" data-surface-label="slider-1" x="190" y="488" text-anchor="middle">CC 11</text>
             </g>
             <g class="surface-control" data-control="slider-2" role="button" tabindex="0" aria-pressed="false" aria-label="Select slider S3">
               <rect class="control-hit" x="258" y="102" width="68" height="320" rx="12" />
-              <rect class="slider-track" x="284" y="124" width="16" height="266" rx="8" />
-              <rect class="slider-slot" x="288" y="130" width="8" height="254" rx="4" />
+              <rect class="slider-track" x="284" y="124" width="16" height="306" rx="8" />
+              <rect class="slider-slot" x="288" y="130" width="8" height="294" rx="4" />
               <rect class="slider-cap control-outline" x="276" y="238" width="32" height="48" rx="8" />
-              <text class="surface-name" x="292" y="426" text-anchor="middle">S3</text>
-              <text class="surface-value" data-surface-label="slider-2" x="292" y="446" text-anchor="middle">CC 14</text>
+              <text class="surface-name" x="292" y="468" text-anchor="middle">S3</text>
+              <text class="surface-value" data-surface-label="slider-2" x="292" y="488" text-anchor="middle">CC 14</text>
             </g>
 
             <g class="surface-control" data-control="encoder-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E1">
@@ -67,7 +66,7 @@
               <circle class="knob-face control-outline" cx="394" cy="252" r="25" />
               <path class="knob-indicator" d="M394 232v-13" />
               <text class="surface-name" x="394" y="312" text-anchor="middle">E1</text>
-              <text class="surface-value" data-surface-label="encoder-0" x="394" y="330" text-anchor="middle">No target</text>
+              <text class="surface-detail" data-surface-detail="encoder-0" x="394" y="332" text-anchor="middle"></text>
             </g>
             <g class="surface-control" data-control="encoder-2" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E3">
               <circle class="control-hit" cx="484" cy="252" r="48" />
@@ -75,25 +74,29 @@
               <circle class="knob-face control-outline" cx="484" cy="252" r="25" />
               <path class="knob-indicator" d="M484 232v-13" />
               <text class="surface-name" x="484" y="312" text-anchor="middle">E3</text>
-              <text class="surface-value" data-surface-label="encoder-2" x="484" y="330" text-anchor="middle">No target</text>
+              <text class="surface-detail" data-surface-detail="encoder-2" x="484" y="332" text-anchor="middle"></text>
             </g>
             <g class="surface-control" data-control="encoder-1" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E2">
-              <circle class="control-hit" cx="394" cy="382" r="48" />
-              <circle class="knob-rim" cx="394" cy="382" r="35" />
-              <circle class="knob-face control-outline" cx="394" cy="382" r="25" />
-              <path class="knob-indicator" d="M394 362v-13" />
-              <text class="surface-name" x="394" y="442" text-anchor="middle">E2</text>
-              <text class="surface-value" data-surface-label="encoder-1" x="394" y="460" text-anchor="middle">No target</text>
+              <circle class="control-hit" cx="394" cy="452" r="48" />
+              <circle class="knob-rim" cx="394" cy="452" r="35" />
+              <circle class="knob-face control-outline" cx="394" cy="452" r="25" />
+              <path class="knob-indicator" d="M394 432v-13" />
+              <text class="surface-name" x="394" y="512" text-anchor="middle">E2</text>
+              <text class="surface-detail" data-surface-detail="encoder-1" x="394" y="532" text-anchor="middle"></text>
             </g>
             <g class="surface-control" data-control="encoder-3" role="button" tabindex="0" aria-pressed="false" aria-label="Select encoder E4">
-              <circle class="control-hit" cx="484" cy="382" r="48" />
-              <circle class="knob-rim" cx="484" cy="382" r="35" />
-              <circle class="knob-face control-outline" cx="484" cy="382" r="25" />
-              <path class="knob-indicator" d="M484 362v-13" />
-              <text class="surface-name" x="484" y="442" text-anchor="middle">E4</text>
-              <text class="surface-value" data-surface-label="encoder-3" x="484" y="460" text-anchor="middle">No target</text>
+              <circle class="control-hit" cx="484" cy="452" r="48" />
+              <circle class="knob-rim" cx="484" cy="452" r="35" />
+              <circle class="knob-face control-outline" cx="484" cy="452" r="25" />
+              <path class="knob-indicator" d="M484 432v-13" />
+              <text class="surface-name" x="484" y="512" text-anchor="middle">E4</text>
+              <text class="surface-detail" data-surface-detail="encoder-3" x="484" y="532" text-anchor="middle"></text>
             </g>
           </svg>
+        </div>
+        <div class="surface-connection">
+          <label>TPMidi MIDI port<select id="port"><option value="">Select TPMidi...</option></select></label>
+          <button id="connect" type="button">Connect</button>
         </div>
         <p class="hint">Select a control to jump to its mapping. Labels update from the current configuration.</p>
       </aside>
@@ -203,7 +206,7 @@ function render(config = defaultConfig()) {
   updateSurfaceMap(configState); selectControl(selected);
 }
 
-function updateSurfaceMap(config) {
+function updateLegacySurfaceMap(config) {
   config.sliders.forEach((cc, i) => { document.querySelector(`[data-surface-label="slider-${i}"]`).textContent = `CC ${cc}`; });
   config.encoders.forEach((mapping, i) => {
     const label = mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : (selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0].split(': ').at(-1) || 'No target');
@@ -211,6 +214,32 @@ function updateSurfaceMap(config) {
   });
 }
 
+function rotaryLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? 'Rotation disabled' : (selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0] || 'No rotation'); }
+function pressLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? 'Unused' : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : (selectedProfile().press.find(([, value]) => value === mapping.press)?.[0] || 'No action'); }
+function setSurfaceDetail(index, lines) {
+  const text = document.querySelector(`[data-surface-detail="encoder-${index}"]`), wordsPerLine = 18;
+  text.replaceChildren();
+  lines.flatMap(line => {
+    const words = line.split(' '), wrapped = []; let current = '';
+    for (const word of words) { if (`${current} ${word}`.trim().length > wordsPerLine && current) { wrapped.push(current); current = word; } else current = `${current} ${word}`.trim(); }
+    if (current) wrapped.push(current); return wrapped;
+  }).forEach((line, i) => { const span = document.createElementNS('http://www.w3.org/2000/svg', 'tspan'); span.setAttribute('x', text.getAttribute('x')); span.setAttribute('dy', i ? '11' : '0'); span.textContent = line; text.append(span); });
+}
+function setOled(line1, line2, progress = 0) {
+  document.querySelector('#oledPrimary').textContent = line1;
+  document.querySelector('#oledSecondary').textContent = line2;
+  document.querySelector('#oledProgressFill').setAttribute('width', String(96 * Math.max(0, Math.min(1, progress))));
+}
+function showSelectedOnOled() {
+  const [kind, indexText] = selected.split('-'), index = Number(indexText);
+  if (kind === 'slider') setOled(`S${index + 1} · CC ${configState.sliders[index]}`, 'Ready to configure');
+  else { const mapping = configState.encoders[index]; setOled(`E${index + 1} · ${rotaryLabel(mapping)}`, `Press · ${pressLabel(mapping)}`); }
+}
+function updateSurfaceMap(config) {
+  config.sliders.forEach((cc, i) => { document.querySelector(`[data-surface-label="slider-${i}"]`).textContent = `CC ${cc}`; });
+  config.encoders.forEach((mapping, i) => setSurfaceDetail(i, [`Rot: ${rotaryLabel(mapping)}`, `Press: ${pressLabel(mapping)}`]));
+  if (!updater.busy) showSelectedOnOled();
+}
 function noteOptions(value) { return Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>Note ${n}</option>`).join(''); }
 function renderControlEditor() {
   const editor = document.querySelector('#controlEditor');
@@ -237,6 +266,7 @@ function selectControl(id) {
   selected = id;
   document.querySelectorAll('.surface-control').forEach(el => { const isSelected = el.dataset.control === id; el.dataset.selected = String(isSelected); el.setAttribute('aria-pressed', String(isSelected)); });
   renderControlEditor();
+  if (!updater.busy) showSelectedOnOled();
   document.querySelector('#controlEditor')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
@@ -335,30 +365,34 @@ document.querySelectorAll('.surface-control').forEach(el => {
   el.addEventListener('click', () => selectControl(el.dataset.control));
   el.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectControl(el.dataset.control); } });
 });
-const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;};
+const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;setOled('Update failed', 'Check firmware state');};
 document.querySelector('#firmwareStatus').onclick=()=>updater.request(0x40).catch(firmwareError);
 async function startFirmwareUpdate(file) {
   const button=document.querySelector('#firmwareUpdate');
   button.disabled=true;document.querySelector('#firmwareProgress').value=0;
   document.querySelector('#firmwareState').textContent=`Preparing ${file.name}...`;
+  setOled('Preparing update', file.name);
   try {
     await updater.upload(file,value=>{
       document.querySelector('#firmwareProgress').value=value;
       document.querySelector('#firmwareState').textContent=`Updating ${Math.round(value*100)}%...`;
+      setOled('Updating…', `${Math.round(value * 100)}%`, value);
     });
-    document.querySelector('#firmwareState').textContent='Firmware verified. Select "Restart to test update" to boot the new slot.';
+    document.querySelector('#firmwareState').textContent='Firmware verified. Select "Restart to test update" to boot the new slot.';setOled('Update verified', 'Restart to test', 1);
   } catch(error) {firmwareError(error);}
   finally {button.disabled=false;}
 }
 function firmwareProgress(value) {
   document.querySelector('#firmwareProgress').value=value;
   document.querySelector('#firmwareState').textContent=`Updating ${Math.round(value*100)}%...`;
+  setOled('Updating…', `${Math.round(value * 100)}%`, value);
 }
 async function startLatestFirmwareUpdate() {
   const button=document.querySelector('#firmwareUpdate');
   button.disabled=true;document.querySelector('#firmwareProgress').value=0;
   try {
     document.querySelector('#firmwareState').textContent='Reading TPMidi update status...';
+    setOled('Checking update', 'Reading TPMidi');
     const state=await updater.request(0x40);
     if(!state.healthy || state.pending!==255) throw new Error('TPMidi must be healthy with no pending update.');
     const target=state.slot===0?'B':'A';
@@ -378,8 +412,9 @@ async function startLatestFirmwareUpdate() {
     if(bytes[5] !== (target==='A'?0:1)) throw new Error('Release asset targets the wrong slot.');
     if(releaseNumber<=Math.max(...state.releases)) throw new Error(`TPMidi already has release ${Math.max(...state.releases)} or newer.`);
     document.querySelector('#firmwareState').textContent=`Downloading release ${releaseNumber}...`;
+    setOled(`Release ${releaseNumber}`, 'Downloading…');
     await updater.uploadBytes(bytes,firmwareProgress);
-    document.querySelector('#firmwareState').textContent=`Release ${releaseNumber} verified. Select "Restart to test update" to boot it.`;
+    document.querySelector('#firmwareState').textContent=`Release ${releaseNumber} verified. Select "Restart to test update" to boot it.`;setOled(`Release ${releaseNumber}`, 'Verified · restart', 1);
   } catch(error) {firmwareError(error);}
   finally {button.disabled=false;}
 }
