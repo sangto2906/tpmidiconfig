@@ -98,7 +98,6 @@
             </g>
           </svg>
         </div>
-        <p class="hint" data-i18n="surfaceHint">Select a control to jump to its mapping. Labels update from the current configuration.</p>
       </aside>
 
       <section class="panel configuration-panel" aria-labelledby="configuration-title">
@@ -122,7 +121,6 @@
               <option value="4">Mackie Control (Logic / Ableton fallback)</option>
             </select>
           </label>
-          <p id="profileHelp" class="hint"></p>
         </div>
         <section class="control-editor" id="controlEditor" aria-live="polite"></section>
       </section>
@@ -141,7 +139,7 @@
       </div>
       <progress id="firmwareProgress" max="1" value="0" aria-label="Firmware update progress"></progress>
       <div class="danger-zone">
-        <div><strong data-i18n="factoryReset">Factory reset</strong><p class="hint" data-i18n="factoryHint">Erase saved mappings and restore the device defaults.</p></div>
+        <div><strong data-i18n="factoryReset">Factory reset</strong></div>
         <button id="factoryReset" class="danger" type="button" data-i18n="resetConfig">Reset configuration</button>
       </div>
     </section>
@@ -175,7 +173,7 @@ const profileDefinitions = {
     press: [['No action', 0], ['TPMidi SysEx: mixer focus', 1], ['TPMidi SysEx: tap tempo', 2], ['TPMidi SysEx: play / stop', 3], ['TPMidi SysEx: record toggle', 4], ['TPMidi SysEx: undo', 5], ['TPMidi SysEx: redo', 6]]
   },
   1: {
-    help: 'Actions use the bundled FL Studio MIDI script. Transport cursor moves the playhead by 24 absolute ticks per detent.',
+    help: 'Thao tác dùng FL Studio MIDI script đi kèm. Transport cursor di chuyển playhead 24 ticks cho mỗi nấc xoay.',
     rotary: [['No rotation', 0], ['FL Studio: selected track previous / next', 1], ['FL Studio: cursor left / right', 2], ['FL Studio: previous / next marker', 3], ['FL Studio: tempo down / up', 4], ['FL Studio: horizontal zoom out / in', 5], ['FL Studio: vertical zoom out / in', 6], ['FL Studio: selected-track Volume', 7], ['FL Studio: move playhead +/-24 ticks', 8], ['FL Studio: selected-track Pan', 9]],
     press: [['No action', 0], ['FL Studio: focus Mixer', 1], ['FL Studio: Tap tempo', 2], ['FL Studio: Play / pause', 3], ['FL Studio: Record', 4], ['FL Studio: Undo', 5], ['FL Studio: Redo', 6], ['FL Studio: Stop', 7], ['FL Studio: Toggle loop', 8], ['FL Studio: Metronome', 9], ['FL Studio: Add marker', 10], ['FL Studio: Toggle snap', 11], ['FL Studio: Show Playlist', 12], ['FL Studio: Show Channel Rack', 13], ['FL Studio: Show Piano Roll', 14], ['FL Studio: Show Mixer', 15], ['FL Studio: Save project', 16], ['FL Studio: Count-in', 17], ['FL Studio: Loop recording', 18]]
   },
@@ -215,7 +213,6 @@ const ccOptions = value => Array.from({length: 128}, (_, n) => `<option value="$
 function render(config = defaultConfig()) {
   configState = { profile: config.profile, sliders: [...config.sliders], encoders: config.encoders.map(mapping => ({...mapping})) };
   document.querySelector('#profile').value = configState.profile;
-  document.querySelector('#profileHelp').textContent = selectedProfile().help;
   updateSurfaceMap(configState); selectControl(selected);
 }
 
@@ -403,7 +400,7 @@ function renderFirmwareStatus(state) {
     document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Slot ${state.pending === 0 ? 'A' : 'B'} is waiting for a test restart.`;
     return;
   }
-  document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Update latest release will automatically use the other slot.`;
+  document.querySelector('#firmwareState').textContent = '';
 }
 async function refreshFirmwareStatus() {
   try { await updater.request(0x40); }
