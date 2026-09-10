@@ -500,8 +500,10 @@ async function startLatestFirmwareUpdate() {
     const assetPattern=new RegExp(`^${productName}_release_(\\d+)_${target}\\.tmim$`);
     const asset=releases.flatMap(release => Array.isArray(release.assets) ? release.assets : []).find(item => assetPattern.test(item.name));
     if(!asset) throw new Error(`No published ${productName} slot ${target} image was found.`);
-    const response=await fetch(asset.browser_download_url,{cache:'no-store'});
-    if(!response.ok) throw new Error(`Firmware download failed (${response.status}).`);
+    // Use the Releases asset API rather than github.com/download redirects:
+    // the API is CORS-enabled for Pages and yields the signed binary directly.
+    const response=await fetch(asset.url,{cache:'no-store',headers:{Accept:'application/octet-stream'}});
+    if(!response.ok) throw new Error(`Firmware asset download failed (${response.status}).`);
     const bytes=new Uint8Array(await response.arrayBuffer());
     if(bytes.length<110 || String.fromCharCode(...bytes.slice(0,4))!=='TMIM') throw new Error(`Downloaded file is not a ${productName} update.`);
     const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
