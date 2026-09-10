@@ -186,8 +186,9 @@ const MODE = { ACTION: 0, RELATIVE_CC: 1, NOTE: 2 };
 const RELEASE_FEED_URL = 'firmware/manifest.json';
 // TPFader release 8 accepted the update header but its 32-byte SysEx receive
 // buffer could not hold a 256-byte packed page.  Never offer that revoked
-// package; release 9 expands the buffer and is the first safe web updater.
-const MIN_SAFE_WEB_RELEASE = { TPMidi: 1, TPFader: 9 };
+// package. Releases 9 and 10 still used an 8-bit frame length and wrap at
+// byte 256; release 11 is the first TPFader updater that can parse a page.
+const MIN_SAFE_WEB_RELEASE = { TPMidi: 1, TPFader: 11 };
 const profiles = ['Generic MIDI', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton fallback)'];
 const profileDefinitions = {
   0: {
