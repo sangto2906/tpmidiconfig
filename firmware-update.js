@@ -55,7 +55,10 @@ class TPMidiUpdater {
       const state=await new Promise((resolve,reject)=> {
         this.pending={command,sequence,resolve,reject};let tries=0;
         const attempt=()=> {
-          if(++tries>3) {reject(new Error('Firmware response timed out.'));return;}
+          if(++tries>3) {
+            reject(new Error('Firmware response timed out. No restart was sent; disconnect and reconnect, then read the firmware status before trying again.'));
+            return;
+          }
           try {this.send(frame);} catch(error) {reject(error);return;}
           timer=setTimeout(attempt,4000);
         };attempt();
@@ -75,6 +78,9 @@ class TPMidiUpdater {
       if(!(bytes instanceof Uint8Array) || bytes.length<110 || bytes.length>110+0xdf000) throw new Error('Invalid update size.');
       const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
       if(String.fromCharCode(...bytes.slice(0,4))!=='TMIM' || bytes[4]!==1) throw new Error(`Select a signed ${this.productName()} .tmim update.`);
+      if(this.productName()==='TPFader' && view.getUint32(6,true)<9) {
+        throw new Error('TPFader release 8 and earlier are revoked and cannot be installed. Use release 9 or newer.');
+      }
       const state=await this.request(0x40), target=bytes[5], length=view.getUint32(10,true);
       if(!state.healthy || state.pending!==255 || target!==1-state.slot) throw new Error('Image must target the inactive slot of a healthy confirmed device.');
       if(length!==bytes.length-110 || length<0x3008 || length>0xdf000) throw new Error('Invalid firmware bounds.');
@@ -92,7 +98,9 @@ class TPMidiUpdater {
       if(this.cancelled) throw new Error('Update cancelled.');
       await this.request(0x43);
     } catch(error) {
-      if(!this.cancelled) {try {await this.request(0x44);} catch (_) { /* Preserve original failure. */ }}
+      // Do not send an automatic abort after a transport timeout.  The last
+      // command may already be executing in flash, and recovery must be an
+      // explicit, observed action after reconnecting.  No reboot is automatic.
       throw error;
     } finally {this.busy=false;}
   }

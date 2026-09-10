@@ -1,15 +1,4 @@
 {
-  "generated": "2026-09-10T07:38:44.3320349Z",
-  "assets": [
-    {
-      "name": "TPFader_release_8_A.tmim",
-      "path": "firmware/TPFader_release_8_A.tmim",
-      "release": "tpfader-v8"
-    },
-    {
-      "name": "TPFader_release_8_B.tmim",
-      "path": "firmware/TPFader_release_8_B.tmim",
-      "release": "tpfader-v8"
-    }
-  ]
+  "generated": "2026-09-10T08:18:39.3459804Z",
+  "assets": []
 }

@@ -184,6 +184,10 @@ const MODE = { ACTION: 0, RELATIVE_CC: 1, NOTE: 2 };
 // same-origin downloads work in every supported browser.  The RP2040 still
 // verifies the signed TMIM package; this manifest is only a convenience index.
 const RELEASE_FEED_URL = 'firmware/manifest.json';
+// TPFader release 8 accepted the update header but its 32-byte SysEx receive
+// buffer could not hold a 256-byte packed page.  Never offer that revoked
+// package; release 9 expands the buffer and is the first safe web updater.
+const MIN_SAFE_WEB_RELEASE = { TPMidi: 1, TPFader: 9 };
 const profiles = ['Generic MIDI', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton fallback)'];
 const profileDefinitions = {
   0: {
@@ -213,7 +217,7 @@ const profileDefinitions = {
   }
 };
 const defaultConfig = () => ({ profile: 0, sliders: [1, 11, 14], encoders: Array.from({length: 4}, () => ({mode: 0, parameter: 0, cw: 0, ccw: 0, press: 0})) });
-const defaultFaderConfig = () => ({ faders: [11, 1, 12], buttons: [1, 2, 3] });
+const defaultFaderConfig = () => ({ profile: 0, faders: [11, 1, 12], buttons: [1, 2, 3] });
 let deviceType = 'tpmidi', midiAccess, midiOut, midiIn, connected = false, selected = 'slider-0', waiter, configState = defaultConfig(), faderConfigState = defaultFaderConfig();
 const updater = new TPMidiUpdater(frame => {
   if(!connected || !midiOut) throw new Error('Connect TPMidi first.');
@@ -285,6 +289,13 @@ function updateSurfaceMap(config) {
 }
 function noteOptions(value) { return Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>Note ${n}</option>`).join(''); }
 function faderActionOptions(value) { return optionsFor([['Disabled', 0], ['DAW: Play / pause', 1], ['DAW: Record', 2], ['DAW: Stop', 3]])(value); }
+const faderActions = [['Disabled', 0], ['Play / pause', 1], ['Record', 2], ['Stop', 3], ['Undo', 4], ['Redo', 5], ['Metronome', 6], ['Cycle / loop', 7], ['Previous marker', 8], ['Next marker', 9], ['Save project', 10], ['Selected track mute', 11], ['Selected track solo', 12], ['Return to zero', 13], ['Go to end', 14], ['Tap tempo', 15]];
+function faderActionName(value) { return faderActions.find(([, id]) => id === Number(value))?.[0] || 'Disabled'; }
+function faderActionOptions(value) { const profile = profiles[Number(faderConfigState.profile)] || 'Generic MIDI'; return optionsFor(faderActions.map(([label, id]) => [id ? `${profile}: ${label}` : label, id]))(value); }
+function renderFaderSurface() {
+  faderConfigState.faders.forEach((cc, index) => document.querySelector(`[data-fader-label="fader-${index}"]`).textContent = `CC ${cc}`);
+  faderConfigState.buttons.forEach((action, index) => document.querySelector(`[data-fader-label="button-${index}"]`).textContent = conciseAction(faderActionName(action), 'OFF'));
+}
 function renderControlEditor() {
   const editor = document.querySelector('#controlEditor');
   const [kind, indexText] = selected.split('-'), index = Number(indexText);
@@ -337,8 +348,33 @@ function waitFor(command, timeout = 1200) { return new Promise(resolve => { cons
 function onMidiMessage(event) { const data = Array.from(event.data), product = activeProduct(); if (data[0] !== 0xF0 || data.at(-1) !== 0xF7 || data[1] !== MFR || data[2] !== product[0] || data[3] !== product[1]) return; updater.receive(data); waiter?.(data.slice(1, -1)); }
 async function request(command, data = []) { const reply = waitFor(command); send(command, data); return reply; }
 
-async function populatePorts() {
+function detectedDeviceTypes() {
+  const types = new Set();
+  if (!midiAccess) return types;
+  for (const output of midiAccess.outputs.values()) {
+    if (output.name === 'TPFader') types.add('tpfader');
+    if (output.name === 'TPMidi' || output.name === 'TPMidi DAW') types.add('tpmidi');
+  }
+  return types;
+}
+function applyDetectedDeviceType(type) {
+  deviceType = type; document.querySelector('#deviceType').value = type;
+  const fader = type === 'tpfader';
+  document.querySelector('.tpmidi-map').classList.toggle('hidden', fader);
+  document.querySelector('.tpfader-map').classList.toggle('hidden', !fader);
+  document.querySelector('.brand').textContent = `${activePortName()} Config`;
+  document.querySelector('[data-i18n="midiPort"]').textContent = `${activePortName()} MIDI port`;
+  document.querySelector('#save').textContent = `Save to ${activePortName()}`;
+  selected = fader ? 'fader-0' : 'slider-0';
+  if (fader) { renderFaderSurface(); selectControl(selected); } else render(configState);
+}
+async function populatePorts(autoDetect = true) {
   if (!midiAccess) midiAccess = await navigator.requestMIDIAccess({sysex: true});
+  const detected = detectedDeviceTypes();
+  if (autoDetect && detected.size === 1) {
+    const only = [...detected][0];
+    if (only !== deviceType) applyDetectedDeviceType(only);
+  }
   const select = document.querySelector('#port'), previous = select.value;
   select.innerHTML = `<option value="">Select ${activePortName()}...</option>`;
   for (const output of midiAccess.outputs.values()) {
@@ -348,11 +384,12 @@ async function populatePorts() {
   }
 }
 async function requestMidiPermission() {
-  await populatePorts();
+  await populatePorts(true);
+  const detected = detectedDeviceTypes();
   // Enumeration and permission do not open MIDI endpoints. Drop this handle
   // immediately; connect() obtains a new one only when the user connects.
   midiAccess = null;
-  status(`Select ${activePortName()} then Connect.`, 'ok');
+  status(detected.size === 1 ? `${activePortName()} detected and selected automatically. Connect to continue.` : `Select ${activePortName()} then Connect.`, 'ok');
 }
 function releaseMidiPorts() {
   const ports = [...new Set([midiIn, midiOut].filter(Boolean))];
@@ -409,8 +446,10 @@ async function readDevice() {
   const reply = await request(CMD.GET);
   if (!reply) return status('No valid configuration reply.', 'error');
   if (deviceType === 'tpfader') {
-    if (reply.length < 11 || (reply[4] !== 1 && reply[4] !== 2)) return status('No valid TPFader configuration reply.', 'error');
-    faderConfigState = {faders: reply.slice(5, 8), buttons: reply.slice(8, 11)};
+    if (reply.length < 11 || (reply[4] !== 1 && reply[4] !== 2 && reply[4] !== 3)) return status('No valid TPFader configuration reply.', 'error');
+    const isV3 = reply[4] === 3;
+    faderConfigState = isV3 ? {profile: reply[5], faders: reply.slice(6, 9), buttons: reply.slice(9, 12)} : {profile: 0, faders: reply.slice(5, 8), buttons: reply.slice(8, 11)};
+    document.querySelector('#profile').value = faderConfigState.profile;
     renderFaderSurface(); selectControl(selected.startsWith('fader-') || selected.startsWith('button-') ? selected : 'fader-0');
     status('Loaded TPFader configuration.', 'ok');
     return;
@@ -425,7 +464,7 @@ async function saveDevice() {
   const button = document.querySelector('#save'); button.disabled = true;
   if (deviceType === 'tpfader') {
     try {
-      for (const [command, data] of [...faderConfigState.faders.map((cc, index) => [0x21, [index, cc]]), ...faderConfigState.buttons.map((note, index) => [0x22, [index, note]]), [0x24, []]]) {
+      for (const [command, data] of [[0x23, [faderConfigState.profile]], ...faderConfigState.faders.map((cc, index) => [0x21, [index, cc]]), ...faderConfigState.buttons.map((action, index) => [0x22, [index, action]]), [0x24, []]]) {
         const reply = await request(command, data); if (!reply || reply[4] !== 0) throw new Error(`TPFader rejected command 0x${command.toString(16)}.`);
       }
       status('Saved to TPFader flash.', 'ok');
@@ -502,7 +541,10 @@ async function startLatestFirmwareUpdate() {
     const feed=await releaseResponse.json();
     if(!feed || !Array.isArray(feed.assets)) throw new Error('Firmware feed is invalid.');
     const assetPattern=new RegExp(`^${productName}_release_(\\d+)_${target}\\.tmim$`);
-    const asset=feed.assets.find(item => assetPattern.test(item.name));
+    const asset=feed.assets.find(item => {
+      const match=assetPattern.exec(item.name);
+      return match && Number(match[1]) >= (MIN_SAFE_WEB_RELEASE[productName] || 1);
+    });
     if(!asset) throw new Error(`No published ${productName} slot ${target} image was found.`);
     const response=await fetch(asset.path,{cache:'no-store'});
     if(!response.ok) throw new Error(`Firmware asset download failed (${response.status}).`);
@@ -545,7 +587,6 @@ document.querySelector('#deviceType').addEventListener('change', async event => 
   const fader = deviceType === 'tpfader';
   document.querySelector('.tpmidi-map').classList.toggle('hidden', fader);
   document.querySelector('.tpfader-map').classList.toggle('hidden', !fader);
-  document.querySelector('#profileRow').classList.toggle('hidden', fader);
   document.querySelector('.brand').textContent = `${activePortName()} Config`;
   document.querySelector('[data-i18n="midiPort"]').textContent = `${activePortName()} MIDI port`;
   document.querySelector('#save').textContent = `Save to ${activePortName()}`;
@@ -562,9 +603,15 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden' && connected && !updater.busy) releaseMidiPorts();
 });
 document.querySelector('#profile').addEventListener('change', () => {
-  configState.profile = Number(document.querySelector('#profile').value);
-  render(configState);
-  status('Profile changed. Review each encoder before saving.', 'ok');
+  if (deviceType === 'tpfader') {
+    faderConfigState.profile = Number(document.querySelector('#profile').value);
+    renderFaderSurface(); renderControlEditor();
+    status('TPFader DAW profile changed. Review each button before saving.', 'ok');
+  } else {
+    configState.profile = Number(document.querySelector('#profile').value);
+    render(configState);
+    status('Profile changed. Review each encoder before saving.', 'ok');
+  }
 });
 render();
 applyLanguage();
