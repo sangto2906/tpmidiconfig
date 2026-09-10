@@ -179,7 +179,11 @@ const CMD = { GET: 0x20, PROFILE: 0x21, SLIDER: 0x22, ENCODER: 0x23, SAVE: 0x24 
 const MODE = { ACTION: 0, RELATIVE_CC: 1, NOTE: 2 };
 // Products share one repository: choose the newest release that actually
 // carries an asset for the selected product, not GitHub's global "latest".
-const RELEASE_API_URL = 'https://api.github.com/repos/sangto2906/tpmidiconfig/releases?per_page=30';
+// Firmware is mirrored into this Pages site by the deploy workflow.  GitHub's
+// release-download redirect does not consistently expose CORS headers, whereas
+// same-origin downloads work in every supported browser.  The RP2040 still
+// verifies the signed TMIM package; this manifest is only a convenience index.
+const RELEASE_FEED_URL = 'firmware/manifest.json';
 const profiles = ['Generic MIDI', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton fallback)'];
 const profileDefinitions = {
   0: {
@@ -493,16 +497,14 @@ async function startLatestFirmwareUpdate() {
     if(!state.healthy || state.pending!==255) throw new Error(`${productName} must be healthy with no pending update.`);
     const target=state.slot===0?'B':'A';
     document.querySelector('#firmwareState').textContent=`Finding latest release for slot ${target}...`;
-    const releaseResponse=await fetch(RELEASE_API_URL,{cache:'no-store'});
+    const releaseResponse=await fetch(RELEASE_FEED_URL,{cache:'no-store'});
     if(!releaseResponse.ok) throw new Error(`Cannot check latest release (${releaseResponse.status}).`);
-    const releases=await releaseResponse.json();
-    if(!Array.isArray(releases)) throw new Error('GitHub did not return release assets.');
+    const feed=await releaseResponse.json();
+    if(!feed || !Array.isArray(feed.assets)) throw new Error('Firmware feed is invalid.');
     const assetPattern=new RegExp(`^${productName}_release_(\\d+)_${target}\\.tmim$`);
-    const asset=releases.flatMap(release => Array.isArray(release.assets) ? release.assets : []).find(item => assetPattern.test(item.name));
+    const asset=feed.assets.find(item => assetPattern.test(item.name));
     if(!asset) throw new Error(`No published ${productName} slot ${target} image was found.`);
-    // Use the Releases asset API rather than github.com/download redirects:
-    // the API is CORS-enabled for Pages and yields the signed binary directly.
-    const response=await fetch(asset.url,{cache:'no-store',headers:{Accept:'application/octet-stream'}});
+    const response=await fetch(asset.path,{cache:'no-store'});
     if(!response.ok) throw new Error(`Firmware asset download failed (${response.status}).`);
     const bytes=new Uint8Array(await response.arrayBuffer());
     if(bytes.length<110 || String.fromCharCode(...bytes.slice(0,4))!=='TMIM') throw new Error(`Downloaded file is not a ${productName} update.`);
