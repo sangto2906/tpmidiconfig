@@ -1,7 +1,8 @@
 /* TPMidi A/B protocol v1. No private signing material belongs in this file. */
 class TPMidiUpdater {
-  constructor(send, display) {
+  constructor(send, display, product = () => [0x54, 0x4d], productName = () => 'TPMidi') {
     this.send = send; this.display = display;
+    this.product = product; this.productName = productName;
     this.sequence = crypto.getRandomValues(new Uint32Array(1))[0] & 0xfffff;
     this.pending = null; this.cancelled = false; this.busy = false;
   }
@@ -48,7 +49,7 @@ class TPMidiUpdater {
   async request(command,bytes=new Uint8Array()) {
     if(this.pending) throw new Error('Another firmware request is pending.');
     const sequence=this.sequence++ & 0x1fffff;
-    const frame=[0xf0,0x7d,0x54,0x4d,command,1,sequence&127,(sequence>>7)&127,(sequence>>14)&127,...TPMidiUpdater.pack(bytes),0xf7];
+    const frame=[0xf0,0x7d,...this.product(),command,1,sequence&127,(sequence>>7)&127,(sequence>>14)&127,...TPMidiUpdater.pack(bytes),0xf7];
     let timer;
     try {
       const state=await new Promise((resolve,reject)=> {
@@ -73,7 +74,7 @@ class TPMidiUpdater {
     try {
       if(!(bytes instanceof Uint8Array) || bytes.length<110 || bytes.length>110+0xdf000) throw new Error('Invalid update size.');
       const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
-      if(String.fromCharCode(...bytes.slice(0,4))!=='TMIM' || bytes[4]!==1) throw new Error('Select a signed TPMidi .tmim update.');
+      if(String.fromCharCode(...bytes.slice(0,4))!=='TMIM' || bytes[4]!==1) throw new Error(`Select a signed ${this.productName()} .tmim update.`);
       const state=await this.request(0x40), target=bytes[5], length=view.getUint32(10,true);
       if(!state.healthy || state.pending!==255 || target!==1-state.slot) throw new Error('Image must target the inactive slot of a healthy confirmed device.');
       if(length!==bytes.length-110 || length<0x3008 || length>0xdf000) throw new Error('Invalid firmware bounds.');

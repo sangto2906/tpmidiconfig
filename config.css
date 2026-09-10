@@ -24,17 +24,21 @@ input, select { width: 100%; padding: 0 var(--space-3); }
 .intro { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: var(--space-6); padding: var(--space-6) 0; }
 h1 { margin: 0; font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.25rem); letter-spacing: -0.045em; line-height: 1; overflow-wrap: anywhere; }
 .intro p { max-width: 58ch; color: var(--color-muted); line-height: 1.55; }
-.connection { align-self: end; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2); }
+.connection { align-self: end; display: grid; grid-template-columns: 132px minmax(0, 1fr) auto; gap: var(--space-2); }
 .workspace { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(360px, .65fr); gap: var(--space-6); align-items: stretch; }
 .panel { background: var(--color-surface); border: var(--rule); border-radius: var(--radius-md); padding: var(--space-5); }
 .panel h2 { font-size: var(--text-lg); letter-spacing: -0.02em; margin: 0 0 var(--space-4); }
 .surface-panel { align-self: stretch; height: 100%; }
 .device-map { margin: 0 calc(var(--space-2) * -1); }
 .surface-map { display: block; width: 100%; height: auto; overflow: visible; }
-.device-body { fill: oklch(72% .012 255); stroke: oklch(43% .02 255); stroke-width: 2; }.display-bezel { fill: oklch(23% .018 255); stroke: oklch(43% .02 255); stroke-width: 2; }.display-screen { fill: oklch(14% .02 255); }.oled-primary { fill: oklch(72% .12 185); font-family: var(--font-mono); font-size: 16px; font-weight: 700; }.oled-secondary { fill: oklch(69% .04 185); font-family: var(--font-mono); font-size: 10px; }.oled-progress-track { fill: oklch(28% .02 185); }.oled-progress-fill { fill: oklch(72% .12 185); transition: width var(--dur-fast) var(--ease-out); }
+.tpfader-map { width: min(88%, 520px); margin-inline: auto; }
+.device-body { fill: oklch(72% .012 255); stroke: oklch(43% .02 255); stroke-width: 2; }.display-bezel { fill: oklch(23% .018 255); stroke: oklch(43% .02 255); stroke-width: 2; }.display-screen { fill: oklch(14% .02 255); }.oled-primary { fill: oklch(72% .12 185); font-family: var(--font-mono); font-size: 16px; font-weight: 700; }.oled-secondary { fill: oklch(69% .04 185); font-family: var(--font-mono); font-size: 10px; }.oled-progress-track { fill: oklch(28% .02 185); }.oled-progress-fill { fill: oklch(72% .12 185); }
 .surface-control { cursor: pointer; outline: none; }.control-hit { fill: transparent; }.slider-track, .knob-rim { fill: oklch(28% .014 255); stroke: oklch(18% .014 255); stroke-width: 2; }.slider-slot { fill: oklch(13% .012 255); }.slider-cap, .knob-face { fill: oklch(63% .014 255); stroke: oklch(24% .018 255); stroke-width: 2; }.knob-indicator { fill: none; stroke: oklch(18% .018 255); stroke-linecap: round; stroke-width: 5; }.surface-name { fill: oklch(18% .02 255); font-family: var(--font-body); font-size: 16px; font-weight: 800; }.surface-value { fill: oklch(32% .025 255); font-family: var(--font-mono); font-size: 11px; font-weight: 650; }.surface-detail { fill: oklch(27% .025 255); font-family: var(--font-mono); font-size: 9px; font-weight: 650; }
 .surface-name { font-size: var(--text-surface-name); }.surface-value { font-size: var(--text-surface-label); font-weight: 700; }.surface-detail { font-size: var(--text-surface-detail); font-weight: 750; text-anchor: middle; }
 .surface-control:hover .control-outline, .surface-control[data-selected="true"] .control-outline, .surface-control:focus-visible .control-outline { fill: var(--color-accent); stroke: var(--color-accent-ink); }.surface-control[data-selected="true"] .surface-name, .surface-control:focus-visible .surface-name { fill: var(--color-accent); }.surface-control:focus-visible .control-outline { stroke-width: 4; }
+.button-rim { fill: oklch(28% .014 255); stroke: oklch(18% .014 255); stroke-width: 2; }
+.button-face { fill: oklch(63% .014 255); stroke: oklch(24% .018 255); stroke-width: 2; }
+.fader-brand { fill: oklch(33% .06 258); font-family: var(--font-body); font-size: 17px; font-weight: 800; letter-spacing: .16em; }
 .panel-heading { display: flex; justify-content: space-between; align-items: start; gap: var(--space-4); padding-bottom: var(--space-5); border-bottom: var(--rule); }
 .panel-heading h2 { margin-bottom: var(--space-2); }.panel-heading .hint { margin: 0; }
 .profile-row { display: grid; grid-template-columns: minmax(220px, .75fr) minmax(0, 1.25fr); gap: var(--space-4); align-items: end; padding: var(--space-5) 0; }
