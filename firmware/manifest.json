@@ -1,15 +1,15 @@
 {
   "assets": [
     {
-      "name": "TPFader_release_10_A.tmim",
-      "path": "firmware/TPFader_release_10_A.tmim",
-      "release": "tpfader-v10"
+      "name": "TPFader_release_12_A.tmim",
+      "path": "firmware/TPFader_release_12_A.tmim",
+      "release": "tpfader-v12"
     },
     {
-      "name": "TPFader_release_10_B.tmim",
-      "path": "firmware/TPFader_release_10_B.tmim",
-      "release": "tpfader-v10"
+      "name": "TPFader_release_12_B.tmim",
+      "path": "firmware/TPFader_release_12_B.tmim",
+      "release": "tpfader-v12"
     }
   ],
-  "generated": "2026-09-10T08:30:05.5783593Z"
+  "generated": "2026-09-10T09:03:00.6940044Z"
 }

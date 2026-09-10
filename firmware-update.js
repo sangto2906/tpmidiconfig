@@ -78,8 +78,8 @@ class TPMidiUpdater {
       if(!(bytes instanceof Uint8Array) || bytes.length<110 || bytes.length>110+0xdf000) throw new Error('Invalid update size.');
       const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
       if(String.fromCharCode(...bytes.slice(0,4))!=='TMIM' || bytes[4]!==1) throw new Error(`Select a signed ${this.productName()} .tmim update.`);
-      if(this.productName()==='TPFader' && view.getUint32(6,true)<9) {
-        throw new Error('TPFader release 8 and earlier are revoked and cannot be installed. Use release 9 or newer.');
+      if(this.productName()==='TPFader' && view.getUint32(6,true)<11) {
+        throw new Error('TPFader releases 1–10 are revoked and cannot be installed. Use release 11 or newer.');
       }
       const state=await this.request(0x40), target=bytes[5], length=view.getUint32(10,true);
       if(!state.healthy || state.pending!==255 || target!==1-state.slot) throw new Error('Image must target the inactive slot of a healthy confirmed device.');

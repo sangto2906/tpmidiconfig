@@ -135,6 +135,21 @@
             </select>
           </label>
         </div>
+        <div class="user-profile-row hidden" id="userProfileRow" aria-label="TPFader user profiles">
+          <label><span data-i18n="userProfile">User profile</span>
+            <select id="userProfile">
+              <option value="1">Profile 1</option><option value="2">Profile 2</option>
+              <option value="3">Profile 3</option><option value="4">Profile 4</option>
+              <option value="5">Profile 5</option><option value="6">Profile 6</option>
+              <option value="7">Profile 7</option><option value="8">Profile 8</option>
+            </select>
+          </label>
+          <div class="actions user-profile-actions">
+            <button id="loadUserProfile" type="button" data-i18n="loadUserProfile">Load profile</button>
+            <button id="saveUserProfile" type="button" data-i18n="saveUserProfile">Save current mapping</button>
+          </div>
+          <p class="profile-note" data-i18n="userProfileHint">Profiles are stored in TPFader. Firmware updates preserve them; Factory reset clears them.</p>
+        </div>
         <section class="control-editor" id="controlEditor" aria-live="polite"></section>
       </section>
     </section>
@@ -161,8 +176,8 @@
 <script src="firmware-update.js"></script>
 <script>
 const copy = {
-  en: {language:'Language', statusStart:'Connect TPMidi to begin.', hero:'Map the surface<br>before the DAW.', intro:'Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.', midiPort:'TPMidi MIDI port', selectPort:'Select TPMidi...', connect:'Connect', disconnect:'Disconnect', surface:'Controller surface', surfaceHint:'Select a control to jump to its mapping. Labels update from the current configuration.', editor:'Control editor', editorHint:'Choose a profile, then select a control on the surface to edit it.', read:'Read device', save:'Save to TPMidi', profile:'DAW profile', firmware:'Firmware update', updateLatest:'Update latest release', manualFile:'Use manual file (recovery)', abort:'Abort upload', restart:'Restart to test update', factoryReset:'Factory reset', factoryHint:'Erase saved mappings and restore the device defaults.', resetConfig:'Reset configuration'},
-  vi: {language:'Ngôn ngữ', statusStart:'Kết nối TPMidi để bắt đầu.', hero:'Thiết lập control surface<br>trước khi mở DAW.', intro:'Chọn profile DAW, gán CC cho ba slider và thiết lập thao tác xoay/nhấn cho từng encoder. Xoay theo chiều kim đồng hồ để tăng, ngược chiều để giảm.', midiPort:'Cổng MIDI TPMidi', selectPort:'Chọn TPMidi...', connect:'Kết nối', disconnect:'Ngắt kết nối', surface:'Control surface', surfaceHint:'Chọn một control để chỉnh mapping. Nhãn được cập nhật theo cấu hình hiện tại.', editor:'Chỉnh control', editorHint:'Chọn profile, sau đó chọn control trên surface để chỉnh sửa.', read:'Đọc từ thiết bị', save:'Lưu vào TPMidi', profile:'Profile DAW', firmware:'Cập nhật', updateLatest:'Cập nhật bản mới nhất', manualFile:'Chọn file thủ công (khôi phục)', abort:'Huỷ tải lên', restart:'Khởi động lại để thử bản cập nhật', factoryReset:'Khôi phục mặc định', factoryHint:'Xoá mapping đã lưu và khôi phục cấu hình mặc định của thiết bị.', resetConfig:'Đặt lại cấu hình'}
+  en: {language:'Language', statusStart:'Connect TPMidi to begin.', hero:'Map the surface<br>before the DAW.', intro:'Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.', midiPort:'TPMidi MIDI port', selectPort:'Select TPMidi...', connect:'Connect', disconnect:'Disconnect', surface:'Controller surface', surfaceHint:'Select a control to jump to its mapping. Labels update from the current configuration.', editor:'Control editor', editorHint:'Choose a profile, then select a control on the surface to edit it.', read:'Read device', save:'Save to TPMidi', profile:'DAW profile', userProfile:'User profile', loadUserProfile:'Load profile', saveUserProfile:'Save current mapping', userProfileHint:'Profiles are stored in TPFader. Firmware updates preserve them; Factory reset clears them.', firmware:'Firmware update', updateLatest:'Update latest release', manualFile:'Use manual file (recovery)', abort:'Abort upload', restart:'Restart to test update', factoryReset:'Factory reset', factoryHint:'Erase saved mappings and restore the device defaults.', resetConfig:'Reset configuration'},
+  vi: {language:'Ngôn ngữ', statusStart:'Kết nối TPMidi để bắt đầu.', hero:'Thiết lập control surface<br>trước khi mở DAW.', intro:'Chọn profile DAW, gán CC cho ba slider và thiết lập thao tác xoay/nhấn cho từng encoder. Xoay theo chiều kim đồng hồ để tăng, ngược chiều để giảm.', midiPort:'Cổng MIDI TPMidi', selectPort:'Chọn TPMidi...', connect:'Kết nối', disconnect:'Ngắt kết nối', surface:'Control surface', surfaceHint:'Chọn một control để chỉnh mapping. Nhãn được cập nhật theo cấu hình hiện tại.', editor:'Chỉnh control', editorHint:'Chọn profile, sau đó chọn control trên surface để chỉnh sửa.', read:'Đọc từ thiết bị', save:'Lưu vào TPMidi', profile:'Profile DAW', userProfile:'Profile người dùng', loadUserProfile:'Gọi profile', saveUserProfile:'Lưu mapping hiện tại', userProfileHint:'Profile được lưu trong TPFader. Cập nhật firmware vẫn giữ; khôi phục mặc định sẽ xóa.', firmware:'Cập nhật', updateLatest:'Cập nhật bản mới nhất', manualFile:'Chọn file thủ công (khôi phục)', abort:'Huỷ tải lên', restart:'Khởi động lại để thử bản cập nhật', factoryReset:'Khôi phục mặc định', factoryHint:'Xoá mapping đã lưu và khôi phục cấu hình mặc định của thiết bị.', resetConfig:'Đặt lại cấu hình'}
 };
 let language = localStorage.getItem('tpmidi-language') === 'vi' ? 'vi' : 'en';
 const t = key => copy[language][key] || copy.en[key] || key;
@@ -366,6 +381,7 @@ function applyDetectedDeviceType(type) {
   document.querySelector('.brand').textContent = `${activePortName()} Config`;
   document.querySelector('[data-i18n="midiPort"]').textContent = `${activePortName()} MIDI port`;
   document.querySelector('#save').textContent = `Save to ${activePortName()}`;
+  document.querySelector('#userProfileRow').classList.toggle('hidden', !fader);
   selected = fader ? 'fader-0' : 'slider-0';
   if (fader) { renderFaderSurface(); selectControl(selected); } else render(configState);
 }
@@ -409,6 +425,7 @@ function releaseMidiPorts() {
 function setConnectionControls(isConnected) {
   document.querySelector('#read').disabled = !isConnected;
   document.querySelector('#save').disabled = !isConnected;
+  for (const id of ['loadUserProfile', 'saveUserProfile']) document.querySelector(`#${id}`).disabled = !isConnected || deviceType !== 'tpfader';
   for (const id of ['firmwareUpdate', 'firmwareManual', 'firmwareAbort', 'factoryReset']) {
     document.querySelector(`#${id}`).disabled = !isConnected;
   }
@@ -465,9 +482,7 @@ async function saveDevice() {
   const button = document.querySelector('#save'); button.disabled = true;
   if (deviceType === 'tpfader') {
     try {
-      for (const [command, data] of [[0x23, [faderConfigState.profile]], ...faderConfigState.faders.map((cc, index) => [0x21, [index, cc]]), ...faderConfigState.buttons.map((action, index) => [0x22, [index, action]]), [0x24, []]]) {
-        const reply = await request(command, data); if (!reply || reply[4] !== 0) throw new Error(`TPFader rejected command 0x${command.toString(16)}.`);
-      }
+      await saveFaderConfiguration();
       status('Saved to TPFader flash.', 'ok');
     } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
     return;
@@ -477,6 +492,34 @@ async function saveDevice() {
       const reply = await request(command, data); if (!reply || reply[4] !== 0) throw new Error(`Device rejected command 0x${command.toString(16)}.`);
     }
     status('Saved to TPMidi flash.', 'ok');
+  } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
+}
+async function saveFaderConfiguration() {
+  for (const [command, data] of [[0x23, [faderConfigState.profile]], ...faderConfigState.faders.map((cc, index) => [0x21, [index, cc]]), ...faderConfigState.buttons.map((action, index) => [0x22, [index, action]]), [0x24, []]]) {
+    const reply = await request(command, data);
+    if (!reply || reply[4] !== 0) throw new Error(`TPFader rejected command 0x${command.toString(16)}.`);
+  }
+}
+async function saveSelectedUserProfile() {
+  if (!connected || deviceType !== 'tpfader') return status('Connect TPFader first.', 'error');
+  const button = document.querySelector('#saveUserProfile'); button.disabled = true;
+  try {
+    await saveFaderConfiguration();
+    const number = Number(document.querySelector('#userProfile').value);
+    const reply = await request(0x25, [number]);
+    if (!reply || reply[4] !== 0) throw new Error(`TPFader could not save Profile ${number}.`);
+    status(`Saved current mapping to TPFader Profile ${number}.`, 'ok');
+  } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
+}
+async function loadSelectedUserProfile() {
+  if (!connected || deviceType !== 'tpfader') return status('Connect TPFader first.', 'error');
+  const button = document.querySelector('#loadUserProfile'); button.disabled = true;
+  try {
+    const number = Number(document.querySelector('#userProfile').value);
+    const reply = await request(0x26, [number]);
+    if (!reply || reply[4] !== 0) throw new Error(`TPFader could not load Profile ${number}.`);
+    await readDevice();
+    status(`Loaded TPFader Profile ${number}.`, 'ok');
   } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
 }
 
@@ -542,10 +585,12 @@ async function startLatestFirmwareUpdate() {
     const feed=await releaseResponse.json();
     if(!feed || !Array.isArray(feed.assets)) throw new Error('Firmware feed is invalid.');
     const assetPattern=new RegExp(`^${productName}_release_(\\d+)_${target}\\.tmim$`);
-    const asset=feed.assets.find(item => {
+    const asset=feed.assets.reduce((best, item) => {
       const match=assetPattern.exec(item.name);
-      return match && Number(match[1]) >= (MIN_SAFE_WEB_RELEASE[productName] || 1);
-    });
+      const release = match && Number(match[1]);
+      return release && release >= (MIN_SAFE_WEB_RELEASE[productName] || 1) && (!best || release > best.release)
+        ? {item, release} : best;
+    }, null)?.item;
     if(!asset) throw new Error(`No published ${productName} slot ${target} image was found.`);
     const response=await fetch(asset.path,{cache:'no-store'});
     if(!response.ok) throw new Error(`Firmware asset download failed (${response.status}).`);
@@ -581,6 +626,8 @@ document.querySelector('#factoryReset').onclick=async()=>{
   catch(error) {firmwareError(error);}
 };
 document.querySelector('#connect').addEventListener('click', connect); document.querySelector('#read').addEventListener('click', readDevice); document.querySelector('#save').addEventListener('click', saveDevice);
+document.querySelector('#saveUserProfile').addEventListener('click', saveSelectedUserProfile);
+document.querySelector('#loadUserProfile').addEventListener('click', loadSelectedUserProfile);
 document.querySelector('#language').addEventListener('change', event => { language = event.target.value; localStorage.setItem('tpmidi-language', language); applyLanguage(); });
 document.querySelector('#deviceType').addEventListener('change', async event => {
   if (connected) await disconnect();
@@ -591,6 +638,7 @@ document.querySelector('#deviceType').addEventListener('change', async event => 
   document.querySelector('.brand').textContent = `${activePortName()} Config`;
   document.querySelector('[data-i18n="midiPort"]').textContent = `${activePortName()} MIDI port`;
   document.querySelector('#save').textContent = `Save to ${activePortName()}`;
+  document.querySelector('#userProfileRow').classList.toggle('hidden', !fader);
   selected = fader ? 'fader-0' : 'slider-0';
   if (fader) { renderFaderSurface(); selectControl(selected); }
   else render(configState);
