@@ -35,7 +35,16 @@ class TPMidiUpdater {
     if(seq!==p.sequence) return;
     try {
       const bytes=TPMidiUpdater.unpack(frame.slice(9,-1));
-      if(bytes.length!==18) throw new Error('Invalid firmware status length.');
+      if(bytes.length!==18) {
+        // A pre-A/B TPFader interprets command 0x40 as an unknown ordinary
+        // configuration command and replies with its one-byte error status.
+        // It cannot safely receive a .tmim package; it needs one BOOTSEL
+        // bootstrap install before web updates become available.
+        if (p.command === 0x40 && bytes.length === 1) {
+          throw new Error('This firmware does not support signed web updates. Install the TPFader A/B bootstrap once through BOOTSEL, then reconnect.');
+        }
+        throw new Error(`Invalid firmware status length (${bytes.length}).`);
+      }
       const view=new DataView(bytes.buffer);
       const state={error:bytes[0],slot:bytes[1],confirmed:bytes[2],pending:bytes[3],attempts:bytes[4],
         releases:[view.getUint32(5,true),view.getUint32(9,true)],received:view.getUint32(13,true),healthy:!!bytes[17]};
