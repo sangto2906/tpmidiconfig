@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TPMidi Config</title>
+  <title>TPMidi Configuration</title>
   <link rel="stylesheet" href="config.css">
 </head>
 <body>
   <main class="shell">
     <header class="topbar">
-      <div class="brand">TPMidi Config</div>
-      <div class="topbar-tools"><output id="status" class="status" data-i18n="statusStart">Connect TPMidi to begin.</output><label class="language-picker"><span data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">EN</option><option value="vi">VI</option></select></label></div>
+      <div class="brand">TPMidi Configuration</div>
+      <div class="topbar-tools"><output id="status" class="status" data-i18n="statusStart">Connect TPMidi to begin.</output><label class="language-picker"><span data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">En</option><option value="vi">VI</option></select></label></div>
     </header>
 
     <section class="intro">
@@ -19,7 +19,7 @@
         <p data-i18n="intro">Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.</p>
       </div>
       <div class="connection">
-          <label><span>Controller</span><select id="deviceType" aria-label="Controller type"><option value="tpmidi">TPMidi</option><option value="tpfader">TPFader</option></select></label>
+          <label><span data-i18n="controller">Controller</span><select id="deviceType" data-i18n-aria="controller" aria-label="Controller"><option value="tpmidi">TPMidi</option><option value="tpfader">TPFader</option></select></label>
           <label><span data-i18n="midiPort">TPMidi MIDI port</span><select id="port"><option value="" data-i18n="selectPort">Select TPMidi...</option></select></label>
           <button id="connect" type="button" data-i18n="connect">Connect</button>
       </div>
@@ -30,8 +30,8 @@
         <h2 data-i18n="surface">Controller surface</h2>
         <div class="device-map">
           <svg class="surface-map tpmidi-map" viewBox="0 0 860 530" role="group" aria-labelledby="surface-map-title surface-map-description">
-            <title id="surface-map-title">TPMidi controller surface</title>
-            <desc id="surface-map-description">Select a slider or encoder to configure its mapping.</desc>
+            <title id="surface-map-title" data-i18n="tpmidiMapTitle">TPMidi controller surface</title>
+            <desc id="surface-map-description" data-i18n="tpmidiMapDesc">Select a slider or encoder to configure its mapping.</desc>
             <rect class="device-body" x="10" y="10" width="840" height="510" rx="12" />
             <rect class="display-bezel" x="485" y="18" width="200" height="122" rx="4" />
             <rect class="display-screen" x="499" y="32" width="172" height="94" rx="2" />
@@ -99,8 +99,8 @@
             </g>
           </svg>
           <svg class="surface-map tpfader-map hidden" viewBox="0 0 540 680" role="group" aria-labelledby="tpfader-map-title tpfader-map-description">
-            <title id="tpfader-map-title">TPFader controller surface</title>
-            <desc id="tpfader-map-description">Three vertical faders above three assignable buttons. Select a control to configure it.</desc>
+            <title id="tpfader-map-title" data-i18n="tpfaderMapTitle">TPFader controller surface</title>
+            <desc id="tpfader-map-description" data-i18n="tpfaderMapDesc">Three vertical faders above three assignable buttons. Select a control to configure it.</desc>
             <rect class="device-body" x="28" y="18" width="484" height="644" rx="22" />
             <text class="fader-brand" x="270" y="61" text-anchor="middle">TPFADER</text>
             <g class="surface-control" data-control="fader-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select fader S1"><rect class="control-hit" x="72" y="82" width="104" height="420" rx="16"/><rect class="slider-track" x="113" y="104" width="22" height="360" rx="11"/><rect class="slider-slot" x="118" y="111" width="12" height="346" rx="6"/><rect class="slider-cap control-outline" x="103" y="270" width="42" height="56" rx="9"/><text class="surface-name" x="124" y="493" text-anchor="middle">S1</text><text class="surface-value" data-fader-label="fader-0" x="124" y="516" text-anchor="middle">CC 11</text></g>
@@ -135,7 +135,7 @@
             </select>
           </label>
         </div>
-        <div class="user-profile-row hidden" id="userProfileRow" aria-label="TPFader user profiles">
+        <div class="user-profile-row hidden" id="userProfileRow" data-i18n-aria="userProfiles" aria-label="TPFader user profiles">
           <label><span data-i18n="userProfile">User profile</span>
             <select id="userProfile">
               <option value="1">Profile 1</option><option value="2">Profile 2</option>
@@ -158,14 +158,14 @@
         <h2 id="firmware-title" data-i18n="firmware">Firmware update</h2>
         <p id="firmwareState"></p>
       </div>
-      <input id="firmwareFile" type="file" accept=".tmim" aria-label="Signed firmware file" hidden>
+      <input id="firmwareFile" type="file" accept=".tmim" data-i18n-aria="signedFirmwareFile" aria-label="Signed firmware file" hidden>
       <div class="firmware-actions">
         <button id="firmwareUpdate" class="primary" type="button" data-i18n="updateLatest">Update latest release</button>
         <button id="firmwareManual" type="button" data-i18n="manualFile">Use manual file (recovery)</button>
         <button id="firmwareAbort" type="button" data-i18n="abort">Abort upload</button>
         <button id="firmwareReboot" type="button" disabled data-i18n="restart">Restart to test update</button>
       </div>
-      <progress id="firmwareProgress" max="1" value="0" aria-label="Firmware update progress"></progress>
+      <progress id="firmwareProgress" max="1" value="0" data-i18n-aria="firmwareProgress" aria-label="Firmware update progress"></progress>
       <div class="danger-zone">
         <div><strong data-i18n="factoryReset">Factory reset</strong></div>
         <button id="factoryReset" class="danger" type="button" data-i18n="resetConfig">Reset configuration</button>
@@ -176,17 +176,25 @@
 <script src="firmware-update.js"></script>
 <script>
 const copy = {
-  en: {language:'Language', statusStart:'Connect TPMidi to begin.', hero:'Map the surface<br>before the DAW.', intro:'Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.', midiPort:'TPMidi MIDI port', selectPort:'Select TPMidi...', connect:'Connect', disconnect:'Disconnect', surface:'Controller surface', surfaceHint:'Select a control to jump to its mapping. Labels update from the current configuration.', editor:'Control editor', editorHint:'Choose a profile, then select a control on the surface to edit it.', read:'Read device', save:'Save to TPMidi', profile:'DAW profile', userProfile:'User profile', loadUserProfile:'Load profile', saveUserProfile:'Save current mapping', userProfileHint:'Profiles are stored in TPFader. Firmware updates preserve them; Factory reset clears them.', firmware:'Firmware update', updateLatest:'Update latest release', manualFile:'Use manual file (recovery)', abort:'Abort upload', restart:'Restart to test update', factoryReset:'Factory reset', factoryHint:'Erase saved mappings and restore the device defaults.', resetConfig:'Reset configuration'},
-  vi: {language:'Ngôn ngữ', statusStart:'Kết nối TPMidi để bắt đầu.', hero:'Thiết lập control surface<br>trước khi mở DAW.', intro:'Chọn profile DAW, gán CC cho ba slider và thiết lập thao tác xoay/nhấn cho từng encoder. Xoay theo chiều kim đồng hồ để tăng, ngược chiều để giảm.', midiPort:'Cổng MIDI TPMidi', selectPort:'Chọn TPMidi...', connect:'Kết nối', disconnect:'Ngắt kết nối', surface:'Control surface', surfaceHint:'Chọn một control để chỉnh mapping. Nhãn được cập nhật theo cấu hình hiện tại.', editor:'Chỉnh control', editorHint:'Chọn profile, sau đó chọn control trên surface để chỉnh sửa.', read:'Đọc từ thiết bị', save:'Lưu vào TPMidi', profile:'Profile DAW', userProfile:'Profile người dùng', loadUserProfile:'Gọi profile', saveUserProfile:'Lưu mapping hiện tại', userProfileHint:'Profile được lưu trong TPFader. Cập nhật firmware vẫn giữ; khôi phục mặc định sẽ xóa.', firmware:'Cập nhật', updateLatest:'Cập nhật bản mới nhất', manualFile:'Chọn file thủ công (khôi phục)', abort:'Huỷ tải lên', restart:'Khởi động lại để thử bản cập nhật', factoryReset:'Khôi phục mặc định', factoryHint:'Xoá mapping đã lưu và khôi phục cấu hình mặc định của thiết bị.', resetConfig:'Đặt lại cấu hình'}
+  en: {language:'Language', controller:'Controller', statusStart:'Connect TPMidi to begin.', hero:'Map the surface<br>before the DAW.', intro:'Select a DAW profile, assign three slider CCs, and define a rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.', midiPort:'TPMidi MIDI port', selectPort:'Select TPMidi...', connect:'Connect', disconnect:'Disconnect', surface:'Controller surface', tpmidiMapTitle:'TPMidi controller surface', tpmidiMapDesc:'Select a slider or encoder to configure its mapping.', tpfaderMapTitle:'TPFader controller surface', tpfaderMapDesc:'Three vertical faders above three assignable buttons. Select a control to configure it.', editor:'Control editor', editorHint:'Choose a DAW profile, then select a control on the surface to edit it.', read:'Read device', save:'Save to TPMidi', profile:'DAW profile', userProfile:'User profile', userProfiles:'TPFader user profiles', loadUserProfile:'Load profile', saveUserProfile:'Save current mapping', userProfileHint:'Profiles are stored in TPFader. Firmware updates preserve them; Factory reset clears them.', firmware:'Firmware update', signedFirmwareFile:'Signed firmware file', firmwareProgress:'Firmware update progress', updateLatest:'Update latest release', manualFile:'Use manual file (recovery)', abort:'Abort upload', restart:'Restart to test update', factoryReset:'Factory reset', factoryHint:'Erase saved mappings and restore the device defaults.', resetConfig:'Reset configuration'},
+  vi: {language:'Ngôn ngữ', controller:'Bộ điều khiển', statusStart:'Kết nối TPMidi để bắt đầu.', hero:'Thiết lập bề mặt điều khiển<br>trước khi mở DAW.', intro:'Chọn cấu hình DAW, gán CC cho ba Slider và thiết lập thao tác xoay/nhấn cho từng encoder. Xoay theo chiều kim đồng hồ để tăng, ngược chiều để giảm.', midiPort:'Cổng MIDI TPMidi', selectPort:'Chọn TPMidi...', connect:'Kết nối', disconnect:'Ngắt kết nối', surface:'Bề mặt điều khiển', tpmidiMapTitle:'Bề mặt điều khiển TPMidi', tpmidiMapDesc:'Chọn Slider hoặc encoder để cấu hình mapping.', tpfaderMapTitle:'Bề mặt điều khiển TPFader', tpfaderMapDesc:'Ba fader dọc và ba nút có thể gán. Chọn một điều khiển để cấu hình.', editor:'Trình chỉnh sửa điều khiển', editorHint:'Chọn cấu hình DAW, sau đó chọn một điều khiển trên bề mặt để chỉnh sửa.', read:'Đọc thiết bị', save:'Lưu vào TPMidi', profile:'Cấu hình DAW', userProfile:'Cấu hình người dùng', userProfiles:'Các cấu hình người dùng của TPFader', loadUserProfile:'Tải cấu hình', saveUserProfile:'Lưu mapping hiện tại', userProfileHint:'Các cấu hình được lưu trong TPFader. Cập nhật firmware không xóa chúng; khôi phục mặc định sẽ xóa.', firmware:'Cập nhật firmware', signedFirmwareFile:'Tệp firmware đã ký', firmwareProgress:'Tiến trình cập nhật firmware', updateLatest:'Cập nhật bản phát hành mới nhất', manualFile:'Dùng tệp thủ công (khôi phục)', abort:'Hủy tải lên', restart:'Khởi động lại để kiểm tra bản cập nhật', factoryReset:'Khôi phục mặc định', factoryHint:'Xóa các mapping đã lưu và khôi phục cài đặt mặc định của thiết bị.', resetConfig:'Đặt lại cấu hình'}
 };
 let language = localStorage.getItem('tpmidi-language') === 'vi' ? 'vi' : 'en';
 const t = key => copy[language][key] || copy.en[key] || key;
+const tr = (en, vi) => language === 'vi' ? vi : en;
 function applyLanguage() {
   document.documentElement.lang = language;
   document.querySelectorAll('[data-i18n]').forEach(element => { element.innerHTML = t(element.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(element => { element.setAttribute('aria-label', t(element.dataset.i18nAria)); });
   document.querySelector('#language').value = language;
   (language === 'vi' ? ['MIDI chung', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton)'] : ['Generic MIDI', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton fallback)']).forEach((label, index) => { document.querySelector('#profile').options[index].text = label; });
   document.querySelector('#connect').textContent = connected ? t('disconnect') : t('connect');
+  document.title = tr(`${activePortName()} Configuration`, `Cấu hình ${activePortName()}`);
+  document.querySelectorAll('.surface-control').forEach(control => {
+    const [kind, number] = control.dataset.control.split('-');
+    const label = kind === 'slider' ? 'Slider' : kind === 'encoder' ? 'encoder' : kind === 'fader' ? 'fader' : tr('button', 'nút');
+    control.setAttribute('aria-label', tr(`Select ${label} ${kind === 'button' ? 'SW' : kind === 'encoder' ? 'E' : 'S'}${Number(number) + 1}`, `Chọn ${label} ${kind === 'button' ? 'SW' : kind === 'encoder' ? 'E' : 'S'}${Number(number) + 1}`));
+  });
   render(configState);
 }
 const MFR = 0x7D, PRODUCT = [0x54, 0x4D];
@@ -204,30 +212,32 @@ const RELEASE_FEED_URL = 'firmware/manifest.json';
 // package. Releases 9 and 10 still used an 8-bit frame length and wrap at
 // byte 256; release 11 is the first TPFader updater that can parse a page.
 const MIN_SAFE_WEB_RELEASE = { TPMidi: 1, TPFader: 11 };
-const profiles = ['Generic MIDI', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton fallback)'];
+const profiles = () => language === 'vi'
+  ? ['MIDI chung', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton)']
+  : ['Generic MIDI', 'FL Studio', 'Cubase', 'Studio One', 'Mackie Control (Logic / Ableton fallback)'];
 const profileDefinitions = {
   0: {
-    help: 'Generic SysEx has no bundled DAW script. The labels identify the TPMidi protocol target only.',
+    help: () => tr('Generic SysEx has no bundled DAW script. The labels identify the TPMidi protocol target only.', 'SysEx MIDI chung không có script DAW đi kèm. Nhãn chỉ xác định đích giao thức TPMidi.'),
     rotary: [['No rotation', 0], ['TPMidi SysEx: track navigation', 1], ['TPMidi SysEx: horizontal cursor', 2], ['TPMidi SysEx: marker navigation', 3], ['TPMidi SysEx: tempo', 4], ['TPMidi SysEx: horizontal zoom', 5], ['TPMidi SysEx: vertical zoom', 6], ['TPMidi SysEx: selected parameter', 7], ['TPMidi CC 60: transport cursor', 8]],
     press: [['No action', 0], ['TPMidi SysEx: mixer focus', 1], ['TPMidi SysEx: tap tempo', 2], ['TPMidi SysEx: play / stop', 3], ['TPMidi SysEx: record toggle', 4], ['TPMidi SysEx: undo', 5], ['TPMidi SysEx: redo', 6]]
   },
   1: {
-    help: 'Thao tác dùng FL Studio MIDI script đi kèm. Transport cursor di chuyển playhead 24 ticks cho mỗi nấc xoay.',
+    help: () => tr('Actions use the bundled FL Studio MIDI script. The transport cursor moves the playhead by 24 ticks per encoder step.', 'Thao tác dùng script MIDI FL Studio đi kèm. Con trỏ transport di chuyển playhead 24 tick cho mỗi nấc xoay.'),
     rotary: [['No rotation', 0], ['FL Studio: selected track previous / next', 1], ['FL Studio: cursor left / right', 2], ['FL Studio: previous / next marker', 3], ['FL Studio: tempo down / up', 4], ['FL Studio: horizontal zoom out / in', 5], ['FL Studio: vertical zoom out / in', 6], ['FL Studio: selected-track Volume', 7], ['FL Studio: move playhead +/-24 ticks', 8], ['FL Studio: selected-track Pan', 9]],
     press: [['No action', 0], ['FL Studio: focus Mixer', 1], ['FL Studio: Tap tempo', 2], ['FL Studio: Play / pause', 3], ['FL Studio: Record', 4], ['FL Studio: Undo', 5], ['FL Studio: Redo', 6], ['FL Studio: Stop', 7], ['FL Studio: Toggle loop', 8], ['FL Studio: Metronome', 9], ['FL Studio: Add marker', 10], ['FL Studio: Toggle snap', 11], ['FL Studio: Show Playlist', 12], ['FL Studio: Show Channel Rack', 13], ['FL Studio: Show Piano Roll', 14], ['FL Studio: Show Mixer', 15], ['FL Studio: Save project', 16], ['FL Studio: Count-in', 17], ['FL Studio: Loop recording', 18]]
   },
   2: {
-    help: 'Actions use the bundled Cubase MIDI Remote script. Volume/Pan, Quick Controls and Sends use relative stepping; transport cursor is signed-relative CC 60.',
+    help: () => tr('Actions use the bundled Cubase MIDI Remote script. Volume/Pan, Quick Controls and Sends use relative stepping; the transport cursor is signed-relative CC 60.', 'Thao tác dùng script MIDI Remote Cubase đi kèm. Volume/Pan, Quick Controls và Sends dùng bước tương đối; con trỏ transport là CC 60 tương đối có dấu.'),
     rotary: [['No rotation', 0], ['Cubase: Select Previous / Next Track', 1], ['Cubase: Navigate Left / Right', 2], ['Cubase: Locate Previous / Next Marker', 3], ['Cubase: Tempo - / + 1 BPM', 4], ['Cubase: Zoom Out / Zoom In', 5], ['Cubase: Zoom Out / Zoom In', 6], ['Cubase: Selected Track Volume', 7], ['Cubase: Nudge -1 Frame / Nudge +1 Frame', 8], ['Cubase: Selected Track Pan', 9], ['Cubase: Quick Control 1', 27], ['Cubase: Quick Control 2', 28], ['Cubase: Quick Control 3', 29], ['Cubase: Quick Control 4', 30], ['Cubase: Quick Control 5', 31], ['Cubase: Quick Control 6', 32], ['Cubase: Quick Control 7', 33], ['Cubase: Quick Control 8', 34], ['Cubase: Send 1 Level', 35], ['Cubase: Send 2 Level', 36], ['Cubase: Send 3 Level', 37], ['Cubase: Send 4 Level', 38], ['Cubase: Send 5 Level', 39], ['Cubase: Send 6 Level', 40], ['Cubase: Send 7 Level', 41], ['Cubase: Send 8 Level', 42]],
     press: [['No action', 0], ['Cubase: Start/Stop', 3], ['Cubase: Return to Start Position', 27], ['Cubase: Record', 4], ['Cubase: Undo', 5], ['Cubase: Redo', 6], ['Cubase: Stop', 7], ['Cubase: Cycle Active', 8], ['Cubase: Metronome Active', 9], ['Cubase: Insert Marker', 10], ['Cubase: Save', 16], ['Cubase: Mute', 19], ['Cubase: Solo', 20], ['Cubase: Record Enable', 21], ['Cubase: Go to Project Start', 22], ['Cubase: Goto End', 23], ['Cubase: Auto Punch In', 24], ['Cubase: Auto Punch Out', 25], ['Cubase: Open/Close Browser', 26]]
   },
   3: {
-    help: 'Actions use the bundled Studio One surface. Volume/Pan follow the selected mixer channel; transport cursor is relative CC 60 on TPMidi cable 0.',
+    help: () => tr('Actions use the bundled Studio One surface. Volume/Pan follow the selected mixer channel; the transport cursor is relative CC 60 on TPMidi cable 0.', 'Thao tác dùng surface Studio One đi kèm. Volume/Pan theo kênh mixer đang chọn; con trỏ transport là CC 60 tương đối trên cáp 0 của TPMidi.'),
     rotary: [['No rotation', 0], ['Studio One: selected track previous / next', 1], ['Studio One: cursor left / right', 2], ['Studio One: previous / next marker', 3], ['Studio One: horizontal zoom out / in', 5], ['Studio One: vertical zoom out / in', 6], ['Studio One: selected-track Volume', 7], ['Studio One: move transport cursor', 8], ['Studio One: selected-track Pan', 9]],
     press: [['No action', 0], ['Studio One: Toggle Start', 3], ['Studio One: Record', 4], ['Studio One: Undo', 5], ['Studio One: Redo', 6]]
   },
   4: {
-    help: 'Minimal Mackie Control fallback. It is limited to standard MCU functions that do not require a custom script.',
+    help: () => tr('Minimal Mackie Control fallback. It is limited to standard MCU functions that do not require a custom script.', 'Chế độ dự phòng Mackie Control tối giản. Chỉ có các chức năng MCU chuẩn, không cần script tùy chỉnh.'),
     rotary: [['No rotation', 0], ['Mackie Control: Channel Left / Right', 1], ['Mackie Control: Cursor Left / Right', 2], ['Mackie Control: jog transport cursor', 8]],
     press: [['No action', 0], ['Mackie Control: Play', 3], ['Mackie Control: Record', 4], ['Mackie Control: Undo', 5], ['Mackie Control: Redo', 6]]
   }
@@ -280,10 +290,10 @@ function updateLegacySurfaceMap(config) {
 
 function conciseAction(label, fallback) {
   const action = (label || fallback).split(': ').at(-1);
-  return action === 'No rotation' || action === 'No action' ? 'Off' : action;
+  return action === 'No rotation' || action === 'No action' ? tr('Off', 'Tắt') : action;
 }
-function rotaryLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? 'Disabled' : conciseAction(selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0], 'Off'); }
-function pressLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? 'Unused' : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : conciseAction(selectedProfile().press.find(([, value]) => value === mapping.press)?.[0], 'Off'); }
+function rotaryLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? tr('Disabled', 'Đã tắt') : conciseAction(selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0], tr('Off', 'Tắt')); }
+function pressLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? tr('Unused', 'Không dùng') : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : conciseAction(selectedProfile().press.find(([, value]) => value === mapping.press)?.[0], tr('Off', 'Tắt')); }
 function setSurfaceDetail(index, lines) {
   const text = document.querySelector(`[data-surface-detail="encoder-${index}"]`);
   text.replaceChildren();
@@ -313,7 +323,7 @@ function noteOptions(value) { return Array.from({length: 128}, (_, n) => `<optio
 function faderActionOptions(value) { return optionsFor([['Disabled', 0], ['DAW: Play / pause', 1], ['DAW: Record', 2], ['DAW: Stop', 3]])(value); }
 const faderActions = [['Disabled', 0], ['Play / pause', 1], ['Record', 2], ['Stop', 3], ['Undo', 4], ['Redo', 5], ['Metronome', 6], ['Cycle / loop', 7], ['Previous marker', 8], ['Next marker', 9], ['Save project', 10], ['Selected track mute', 11], ['Selected track solo', 12], ['Return to zero', 13], ['Go to end', 14], ['Tap tempo', 15]];
 function faderActionName(value) { return faderActions.find(([, id]) => id === Number(value))?.[0] || 'Disabled'; }
-function faderActionOptions(value) { const profile = profiles[Number(faderConfigState.profile)] || 'Generic MIDI'; return optionsFor(faderActions.map(([label, id]) => [id ? `${profile}: ${label}` : label, id]))(value); }
+function faderActionOptions(value) { const profile = profiles()[Number(faderConfigState.profile)] || tr('Generic MIDI', 'MIDI chung'); return optionsFor(faderActions.map(([label, id]) => [id ? `${profile}: ${label}` : label, id]))(value); }
 function renderFaderSurface() {
   faderConfigState.faders.forEach((cc, index) => document.querySelector(`[data-fader-label="fader-${index}"]`).textContent = `CC ${cc}`);
   faderConfigState.buttons.forEach((action, index) => document.querySelector(`[data-fader-label="button-${index}"]`).textContent = conciseAction(faderActionName(action), 'OFF'));
@@ -323,9 +333,9 @@ function renderControlEditor() {
   const [kind, indexText] = selected.split('-'), index = Number(indexText);
   if (deviceType === 'tpfader') {
     if (kind === 'fader') {
-      editor.innerHTML = `<div class="editor-heading"><h2>Fader S${index + 1}</h2><p>Performance Control Change sent on MIDIIN.</p></div><label>Control Change<select data-fader-editor="fader" data-index="${index}">${ccOptions(faderConfigState.faders[index])}</select></label>`;
+      editor.innerHTML = `<div class="editor-heading"><h2>Fader S${index + 1}</h2><p>${tr('Performance Control Change sent on MIDIIN.', 'Gửi Control Change hiệu năng qua MIDIIN.')}</p></div><label>Control Change<select data-fader-editor="fader" data-index="${index}">${ccOptions(faderConfigState.faders[index])}</select></label><p class="hint">${tr('The fader uses the full RP2040 12-bit ADC range.', 'Fader sử dụng toàn bộ dải ADC 12-bit của RP2040.')}</p>`;
     } else {
-      editor.innerHTML = `<div class="editor-heading"><h2>Button SW${index + 1}</h2><p>One DAW SysEx action is sent only on press; no MIDI notes are emitted.</p></div><label>DAW action<select data-fader-editor="button" data-index="${index}">${faderActionOptions(faderConfigState.buttons[index])}</select></label>`;
+      editor.innerHTML = `<div class="editor-heading"><h2>${tr('Button', 'Nút')} SW${index + 1}</h2><p>${tr('One DAW SysEx action is sent only on press; no MIDI notes are emitted.', 'Một thao tác SysEx của DAW chỉ được gửi khi nhấn; không gửi MIDI note.')}</p></div><label>${tr('DAW action', 'Thao tác DAW')}<select data-fader-editor="button" data-index="${index}">${faderActionOptions(faderConfigState.buttons[index])}</select></label>`;
     }
     editor.querySelector('[data-fader-editor]').addEventListener('change', event => {
       const target = event.currentTarget, targetIndex = Number(target.dataset.index);
@@ -335,7 +345,7 @@ function renderControlEditor() {
     return;
   }
   if (kind === 'slider') {
-    editor.innerHTML = `<div class="editor-heading"><h2>Slider S${index + 1}</h2><p>${language === 'vi' ? 'Gửi Control Change qua MIDIIN.' : 'Performance Control Change sent on MIDIIN.'}</p></div><label>Control Change<select data-editor="slider" data-index="${index}">${ccOptions(configState.sliders[index])}</select></label>`;
+    editor.innerHTML = `<div class="editor-heading"><h2>Slider S${index + 1}</h2><p>${tr('Performance Control Change sent on MIDIIN.', 'Gửi Control Change hiệu năng qua MIDIIN.')}</p></div><label>Control Change<select data-editor="slider" data-index="${index}">${ccOptions(configState.sliders[index])}</select></label>`;
   } else {
     const mapping = configState.encoders[index];
     const isAction = mapping.mode === MODE.ACTION, isRelative = mapping.mode === MODE.RELATIVE_CC;
@@ -365,7 +375,7 @@ function collectConfig() {
   return { profile: Number(document.querySelector('#profile').value), sliders: [...configState.sliders], encoders: configState.encoders.map(mapping => ({...mapping})) };
 }
 
-function send(command, data = []) { if (!midiOut) throw new Error(`No ${connectedProductName()} output selected.`); midiOut.send([0xF0, MFR, ...connectedProduct(), command, ...data, 0xF7]); }
+function send(command, data = []) { if (!midiOut) throw new Error(tr(`No ${connectedProductName()} output selected.`, `Chưa chọn cổng đầu ra ${connectedProductName()}.`)); midiOut.send([0xF0, MFR, ...connectedProduct(), command, ...data, 0xF7]); }
 function waitFor(command, timeout = 1200) { return new Promise(resolve => { const timer = setTimeout(() => { waiter = null; resolve(null); }, timeout); waiter = payload => { if (payload[3] === command) { clearTimeout(timer); waiter = null; resolve(payload); } }; }); }
 function onMidiMessage(event) { const data = Array.from(event.data), product = connectedProduct(); if (data[0] !== 0xF0 || data.at(-1) !== 0xF7 || data[1] !== MFR || data[2] !== product[0] || data[3] !== product[1]) return; updater.receive(data); waiter?.(data.slice(1, -1)); }
 async function request(command, data = []) { const reply = waitFor(command); send(command, data); return reply; }
@@ -384,9 +394,9 @@ function applyDetectedDeviceType(type) {
   const fader = type === 'tpfader';
   document.querySelector('.tpmidi-map').classList.toggle('hidden', fader);
   document.querySelector('.tpfader-map').classList.toggle('hidden', !fader);
-  document.querySelector('.brand').textContent = `${activePortName()} Config`;
-  document.querySelector('[data-i18n="midiPort"]').textContent = `${activePortName()} MIDI port`;
-  document.querySelector('#save').textContent = `Save to ${activePortName()}`;
+  document.querySelector('.brand').textContent = tr(`${activePortName()} Configuration`, `Cấu hình ${activePortName()}`);
+  document.querySelector('[data-i18n="midiPort"]').textContent = tr(`${activePortName()} MIDI port`, `Cổng MIDI ${activePortName()}`);
+  document.querySelector('#save').textContent = tr(`Save to ${activePortName()}`, `Lưu vào ${activePortName()}`);
   document.querySelector('#userProfileRow').classList.toggle('hidden', !fader);
   selected = fader ? 'fader-0' : 'slider-0';
   if (fader) { renderFaderSurface(); selectControl(selected); } else render(configState);
@@ -399,7 +409,7 @@ async function populatePorts(autoDetect = true) {
     if (only !== deviceType) applyDetectedDeviceType(only);
   }
   const select = document.querySelector('#port'), previous = select.value;
-  select.innerHTML = `<option value="">Select ${activePortName()}...</option>`;
+  select.innerHTML = `<option value="">${tr(`Select ${activePortName()}...`, `Chọn ${activePortName()}...`)}</option>`;
   for (const output of midiAccess.outputs.values()) {
     if (output.name !== activePortName() && !(deviceType === 'tpmidi' && output.name === 'TPMidi DAW')) continue;
     const option = new Option(output.name, output.id, false, previous ? output.id === previous : true);
@@ -412,7 +422,7 @@ async function requestMidiPermission(autoDetect = true) {
   // Enumeration and permission do not open MIDI endpoints. Drop this handle
   // immediately; connect() obtains a new one only when the user connects.
   midiAccess = null;
-  status(detected.size === 1 ? `${activePortName()} detected and selected automatically. Connect to continue.` : `Select ${activePortName()} then Connect.`, 'ok');
+  status(detected.size === 1 ? tr(`${activePortName()} detected and selected automatically. Connect to continue.`, `Đã tự động nhận diện và chọn ${activePortName()}. Hãy kết nối để tiếp tục.`) : tr(`Select ${activePortName()} then Connect.`, `Chọn ${activePortName()} rồi nhấn Kết nối.`), 'ok');
 }
 function releaseMidiPorts() {
   const ports = [...new Set([midiIn, midiOut].filter(Boolean))];
@@ -442,59 +452,59 @@ async function disconnect() {
   await Promise.all(closing);
   document.querySelector('#connect').textContent = t('connect');
   setConnectionControls(false);
-  setOled('Disconnected', 'Select MIDI port');
-  status('Disconnected. MIDI ports released.', 'ok');
+  setOled(tr('Disconnected', 'Đã ngắt kết nối'), tr('Select MIDI port', 'Chọn cổng MIDI'));
+  status(tr('Disconnected. MIDI ports released.', 'Đã ngắt kết nối. Các cổng MIDI đã được giải phóng.'), 'ok');
 }
 async function connect() {
   try {
     if (connected) { await disconnect(); return; }
     if (!connected) {
-      setOled('Connecting…', 'Opening MIDI port');
+      setOled(tr('Connecting…', 'Đang kết nối…'), tr('Opening MIDI port', 'Đang mở cổng MIDI'));
       // A user-selected controller type is authoritative here.  Auto-detect
       // is only for the initial idle page, never for an explicit connection.
       await populatePorts(false); const id = document.querySelector('#port').value; midiOut = midiAccess.outputs.get(id); midiIn = [...midiAccess.inputs.values()].find(port => port.name === midiOut?.name) || [...midiAccess.inputs.values()].find(port => port.name === activePortName()) || [...midiAccess.inputs.values()][0];
-      if (!midiOut || !midiIn) throw new Error(`${activePortName()} input/output was not found.`);
+      if (!midiOut || !midiIn) throw new Error(tr(`${activePortName()} input/output was not found.`, `Không tìm thấy cổng vào/ra ${activePortName()}.`));
       // Do not rely on assigning onmidimessage to implicitly open an endpoint:
       // Chromium's Windows MIDI backend can leave that input closed.
       connectedDevice = deviceType === 'tpfader'
         ? {name: 'TPFader', product: [0x54, 0x46]}
         : {name: 'TPMidi', product: [...PRODUCT]};
       await Promise.all([midiOut.open(), midiIn.open()]);
-      midiIn.onmidimessage = onMidiMessage; connected = true; document.querySelector('#connect').textContent = t('disconnect'); setConnectionControls(true); status('Connected. Reading device...', 'ok'); await readDevice(); await refreshFirmwareStatus(); setOled('Connected', `${activePortName()} ready`);
-    } else { midiIn.onmidimessage = null; midiIn = midiOut = null; connected = false; document.querySelector('#connect').textContent = t('connect'); status('Disconnected.'); }
+      midiIn.onmidimessage = onMidiMessage; connected = true; document.querySelector('#connect').textContent = t('disconnect'); setConnectionControls(true); status(tr('Connected. Reading device...', 'Đã kết nối. Đang đọc thiết bị...'), 'ok'); await readDevice(); await refreshFirmwareStatus(); setOled(tr('Connected', 'Đã kết nối'), tr(`${activePortName()} ready`, `${activePortName()} sẵn sàng`));
+    } else { midiIn.onmidimessage = null; midiIn = midiOut = null; connected = false; document.querySelector('#connect').textContent = t('connect'); status(tr('Disconnected.', 'Đã ngắt kết nối.')); }
   } catch (error) {
     if (!connected) await Promise.all(releaseMidiPorts());
     setConnectionControls(false);
     document.querySelector('#connect').textContent = t('connect');
-    setOled('Connection error', 'Try again');
+    setOled(tr('Connection error', 'Lỗi kết nối'), tr('Try again', 'Hãy thử lại'));
     status(error.message, 'error');
   }
 }
 async function readDevice() {
-  if (!connected) return status(`Connect ${activePortName()} first.`, 'error');
+  if (!connected) return status(tr(`Connect ${activePortName()} first.`, `Hãy kết nối ${activePortName()} trước.`), 'error');
   const reply = await request(CMD.GET);
-  if (!reply) return status('No valid configuration reply.', 'error');
+  if (!reply) return status(tr('No valid configuration reply.', 'Không có phản hồi cấu hình hợp lệ.'), 'error');
   if (deviceType === 'tpfader') {
     if (reply.length < 11 || (reply[4] !== 1 && reply[4] !== 2 && reply[4] !== 3)) return status('No valid TPFader configuration reply.', 'error');
     const isV3 = reply[4] === 3;
     faderConfigState = isV3 ? {profile: reply[5], faders: reply.slice(6, 9), buttons: reply.slice(9, 12)} : {profile: 0, faders: reply.slice(5, 8), buttons: reply.slice(8, 11)};
     document.querySelector('#profile').value = faderConfigState.profile;
     renderFaderSurface(); selectControl(selected.startsWith('fader-') || selected.startsWith('button-') ? selected : 'fader-0');
-    status('Loaded TPFader configuration.', 'ok');
+    status(tr('Loaded TPFader configuration.', 'Đã tải cấu hình TPFader.'), 'ok');
     return;
   }
   if (reply.length < 29) return status('No valid TPMidi configuration reply.', 'error');
   const config = {profile: reply[5], sliders: reply.slice(6, 9), encoders: []}; let offset = 9;
   for (let i = 0; i < 4; i++) { config.encoders.push({mode: reply[offset++], parameter: reply[offset++], cw: reply[offset++], ccw: reply[offset++], press: reply[offset++]}); }
-  render(config); status(`Loaded ${profiles[config.profile]} profile.`, 'ok');
+  render(config); status(tr(`Loaded ${profiles()[config.profile]} profile.`, `Đã tải cấu hình ${profiles()[config.profile]}.`), 'ok');
 }
 async function saveDevice() {
-  if (!connected) return status(`Connect ${activePortName()} first.`, 'error');
+  if (!connected) return status(tr(`Connect ${activePortName()} first.`, `Hãy kết nối ${activePortName()} trước.`), 'error');
   const button = document.querySelector('#save'); button.disabled = true;
   if (deviceType === 'tpfader') {
     try {
       await saveFaderConfiguration();
-      status('Saved to TPFader flash.', 'ok');
+      status(tr('Saved to TPFader flash.', 'Đã lưu vào flash của TPFader.'), 'ok');
     } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
     return;
   }
@@ -502,7 +512,7 @@ async function saveDevice() {
     for (const [command, data] of [[CMD.PROFILE, [config.profile]], ...config.sliders.map((cc, i) => [CMD.SLIDER, [i, cc]]), ...config.encoders.map((m, i) => [CMD.ENCODER, [i, m.mode, m.parameter, m.cw, m.ccw, m.press]]), [CMD.SAVE, []]]) {
       const reply = await request(command, data); if (!reply || reply[4] !== 0) throw new Error(`Device rejected command 0x${command.toString(16)}.`);
     }
-    status('Saved to TPMidi flash.', 'ok');
+    status(tr('Saved to TPMidi flash.', 'Đã lưu vào flash của TPMidi.'), 'ok');
   } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
 }
 async function saveFaderConfiguration() {
@@ -538,23 +548,23 @@ document.querySelectorAll('.surface-control').forEach(el => {
   el.addEventListener('click', () => selectControl(el.dataset.control));
   el.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectControl(el.dataset.control); } });
 });
-const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;setOled('Update failed', 'Check firmware state');};
+const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;setOled(tr('Update failed', 'Cập nhật thất bại'), tr('Check firmware state', 'Kiểm tra trạng thái firmware'));};
 function renderFirmwareStatus(state) {
   const activeSlot = state.slot === 0 ? 'A' : 'B';
   const activeRelease = state.releases[state.slot];
   if (state.error) {
-    document.querySelector('#firmwareState').textContent = `Firmware reports error ${state.error}. Resolve it before updating.`;
+    document.querySelector('#firmwareState').textContent = tr(`Firmware reports error ${state.error}. Resolve it before updating.`, `Firmware báo lỗi ${state.error}. Hãy xử lý trước khi cập nhật.`);
     return;
   }
   if (!state.healthy) {
-    document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Firmware state is not ready for an update.`;
+    document.querySelector('#firmwareState').textContent = tr(`Running slot ${activeSlot}, release ${activeRelease}. Firmware state is not ready for an update.`, `Đang chạy slot ${activeSlot}, bản phát hành ${activeRelease}. Firmware chưa sẵn sàng để cập nhật.`);
     return;
   }
   if (state.pending !== 255) {
-    document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Slot ${state.pending === 0 ? 'A' : 'B'} is waiting for a test restart.`;
+    document.querySelector('#firmwareState').textContent = tr(`Running slot ${activeSlot}, release ${activeRelease}. Slot ${state.pending === 0 ? 'A' : 'B'} is waiting for a test restart.`, `Đang chạy slot ${activeSlot}, bản phát hành ${activeRelease}. Slot ${state.pending === 0 ? 'A' : 'B'} đang chờ khởi động lại để kiểm tra.`);
     return;
   }
-  document.querySelector('#firmwareState').textContent = `Running slot ${activeSlot}, release ${activeRelease}. Ready for a signed update to slot ${activeSlot === 'A' ? 'B' : 'A'}.`;
+  document.querySelector('#firmwareState').textContent = tr(`Running slot ${activeSlot}, release ${activeRelease}. Ready for a signed update to slot ${activeSlot === 'A' ? 'B' : 'A'}.`, `Đang chạy slot ${activeSlot}, bản phát hành ${activeRelease}. Sẵn sàng cập nhật đã ký vào slot ${activeSlot === 'A' ? 'B' : 'A'}.`);
 }
 async function refreshFirmwareStatus() {
   try { await updater.request(0x40); }
@@ -563,15 +573,15 @@ async function refreshFirmwareStatus() {
 async function startFirmwareUpdate(file) {
   const button=document.querySelector('#firmwareUpdate');
   button.disabled=true;document.querySelector('#firmwareProgress').value=0;
-  document.querySelector('#firmwareState').textContent=`Preparing ${file.name}...`;
-  setOled('Preparing update', file.name);
+  document.querySelector('#firmwareState').textContent=tr(`Preparing ${file.name}...`, `Đang chuẩn bị ${file.name}...`);
+  setOled(tr('Preparing update', 'Đang chuẩn bị cập nhật'), file.name);
   try {
     await updater.upload(file,value=>{
       document.querySelector('#firmwareProgress').value=value;
-      document.querySelector('#firmwareState').textContent=`Updating ${Math.round(value*100)}%...`;
-      setOled('Updating…', `${Math.round(value * 100)}%`, value);
+      document.querySelector('#firmwareState').textContent=tr(`Updating ${Math.round(value*100)}%...`, `Đang cập nhật ${Math.round(value*100)}%...`);
+      setOled(tr('Updating…', 'Đang cập nhật…'), `${Math.round(value * 100)}%`, value);
     });
-    document.querySelector('#firmwareState').textContent='Firmware verified. Select "Restart to test update" to boot the new slot.';setOled('Update verified', 'Restart to test', 1);
+    document.querySelector('#firmwareState').textContent=tr('Firmware verified. Select "Restart to test update" to boot the new slot.', 'Đã xác minh firmware. Chọn "Khởi động lại để kiểm tra bản cập nhật" để khởi động slot mới.');setOled(tr('Update verified', 'Đã xác minh cập nhật'), tr('Restart to test', 'Khởi động lại để kiểm tra'), 1);
   } catch(error) {firmwareError(error);}
   finally {button.disabled=false;}
 }
@@ -629,10 +639,10 @@ document.querySelector('#firmwareAbort').onclick=async()=>{
   updater.request(0x44).catch(firmwareError);
 };
 document.querySelector('#firmwareReboot').onclick=()=>{
-  if(confirm(`Restart ${activePortName()} to test the new firmware?`)) updater.request(0x45,new TextEncoder().encode('BOOT')).catch(firmwareError);
+  if(confirm(tr(`Restart ${activePortName()} to test the new firmware?`, `Khởi động lại ${activePortName()} để kiểm tra firmware mới?`))) updater.request(0x45,new TextEncoder().encode('BOOT')).catch(firmwareError);
 };
 document.querySelector('#factoryReset').onclick=async()=>{
-  if(!confirm('Erase your saved mappings and restore factory defaults?')) return;
+  if(!confirm(tr('Erase your saved mappings and restore factory defaults?', 'Xóa các mapping đã lưu và khôi phục cài đặt mặc định?'))) return;
   try {await updater.request(0x46,new TextEncoder().encode('RESET'));await readDevice();}
   catch(error) {firmwareError(error);}
 };
@@ -646,9 +656,9 @@ document.querySelector('#deviceType').addEventListener('change', async event => 
   const fader = deviceType === 'tpfader';
   document.querySelector('.tpmidi-map').classList.toggle('hidden', fader);
   document.querySelector('.tpfader-map').classList.toggle('hidden', !fader);
-  document.querySelector('.brand').textContent = `${activePortName()} Config`;
-  document.querySelector('[data-i18n="midiPort"]').textContent = `${activePortName()} MIDI port`;
-  document.querySelector('#save').textContent = `Save to ${activePortName()}`;
+  document.querySelector('.brand').textContent = tr(`${activePortName()} Configuration`, `Cấu hình ${activePortName()}`);
+  document.querySelector('[data-i18n="midiPort"]').textContent = tr(`${activePortName()} MIDI port`, `Cổng MIDI ${activePortName()}`);
+  document.querySelector('#save').textContent = tr(`Save to ${activePortName()}`, `Lưu vào ${activePortName()}`);
   document.querySelector('#userProfileRow').classList.toggle('hidden', !fader);
   selected = fader ? 'fader-0' : 'slider-0';
   if (fader) { renderFaderSurface(); selectControl(selected); }
@@ -666,18 +676,18 @@ document.querySelector('#profile').addEventListener('change', () => {
   if (deviceType === 'tpfader') {
     faderConfigState.profile = Number(document.querySelector('#profile').value);
     renderFaderSurface(); renderControlEditor();
-    status('TPFader DAW profile changed. Review each button before saving.', 'ok');
+    status(tr('TPFader DAW profile changed. Review each button before saving.', 'Đã đổi cấu hình DAW cho TPFader. Hãy kiểm tra từng nút trước khi lưu.'), 'ok');
   } else {
     configState.profile = Number(document.querySelector('#profile').value);
     render(configState);
-    status('Profile changed. Review each encoder before saving.', 'ok');
+    status(tr('Profile changed. Review each encoder before saving.', 'Đã đổi cấu hình. Hãy kiểm tra từng encoder trước khi lưu.'), 'ok');
   }
 });
 render();
 applyLanguage();
 setConnectionControls(false);
-setOled('Disconnected', 'Select MIDI port');
-if (navigator.requestMIDIAccess) requestMidiPermission().catch(() => status('Web MIDI SysEx permission is required.', 'error')); else status('This browser does not support Web MIDI.', 'error');
+setOled(tr('Disconnected', 'Đã ngắt kết nối'), tr('Select MIDI port', 'Chọn cổng MIDI'));
+if (navigator.requestMIDIAccess) requestMidiPermission().catch(() => status(tr('Web MIDI SysEx permission is required.', 'Cần cấp quyền Web MIDI SysEx.'), 'error')); else status(tr('This browser does not support Web MIDI.', 'Trình duyệt này không hỗ trợ Web MIDI.'), 'error');
 </script>
 </body>
 </html>
