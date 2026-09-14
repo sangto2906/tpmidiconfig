@@ -587,8 +587,34 @@ function renderFirmwareStatus(state) {
   document.querySelector('#firmwareState').textContent = tr(`Running slot ${activeSlot}, release ${activeRelease}. Ready for a signed update to slot ${activeSlot === 'A' ? 'B' : 'A'}.`, `Đang chạy slot ${activeSlot}, bản phát hành ${activeRelease}. Sẵn sàng cập nhật đã ký vào slot ${activeSlot === 'A' ? 'B' : 'A'}.`);
 }
 async function refreshFirmwareStatus() {
-  try { await updater.request(0x40); }
-  catch (error) { document.querySelector('#firmwareState').textContent = `Could not read firmware status: ${error.message}`; }
+  try {
+    const state = await updater.request(0x40);
+    if (!state.healthy || state.pending !== 255) return;
+    const productName = connectedProductName();
+    const target = state.slot === 0 ? 'B' : 'A';
+    const latest = await findLatestPublishedAsset(productName, target);
+    const installed = Math.max(...state.releases);
+    if (latest && latest.release > installed) {
+      document.querySelector('#firmwareState').textContent = tr(`Update available: release ${latest.release}.`, `Có bản cập nhật: bản phát hành ${latest.release}.`);
+    } else {
+      document.querySelector('#firmwareState').textContent = tr(`You are running the latest release (${installed}).`, `Bạn đang dùng bản phát hành mới nhất (${installed}).`);
+    }
+  } catch (error) {
+    document.querySelector('#firmwareState').textContent = tr(`Could not check for updates: ${error.message}`, `Không thể kiểm tra bản cập nhật: ${error.message}`);
+  }
+}
+async function findLatestPublishedAsset(productName, target) {
+  const response = await fetch(releaseFeedUrl(productName), {cache: 'no-store'});
+  if (!response.ok) throw new Error(tr(`Cannot check latest release (${response.status}).`, `Không thể kiểm tra bản phát hành mới nhất (${response.status}).`));
+  const feed = await response.json();
+  if (!feed || !Array.isArray(feed.assets)) throw new Error(tr('Firmware feed is invalid.', 'Danh mục firmware không hợp lệ.'));
+  const pattern = new RegExp(`^${productName}_release_(\\d+)_${target}\\.tmim$`);
+  return feed.assets.reduce((best, item) => {
+    const match = pattern.exec(item.name);
+    const release = match && Number(match[1]);
+    return release && release >= (MIN_SAFE_WEB_RELEASE[productName] || 1) && (!best || release > best.release)
+      ? {item, release} : best;
+  }, null);
 }
 async function startFirmwareUpdate(file) {
   const button=document.querySelector('#firmwareUpdate');
@@ -621,18 +647,9 @@ async function startLatestFirmwareUpdate() {
     if(!state.healthy || state.pending!==255) throw new Error(`${productName} must be healthy with no pending update.`);
     const target=state.slot===0?'B':'A';
     document.querySelector('#firmwareState').textContent=tr(`Finding latest release for slot ${target}...`, `Đang tìm bản phát hành mới nhất cho slot ${target}...`);
-    const releaseResponse=await fetch(releaseFeedUrl(productName),{cache:'no-store'});
-    if(!releaseResponse.ok) throw new Error(`Cannot check latest release (${releaseResponse.status}).`);
-    const feed=await releaseResponse.json();
-    if(!feed || !Array.isArray(feed.assets)) throw new Error('Firmware feed is invalid.');
-    const assetPattern=new RegExp(`^${productName}_release_(\\d+)_${target}\\.tmim$`);
-    const asset=feed.assets.reduce((best, item) => {
-      const match=assetPattern.exec(item.name);
-      const release = match && Number(match[1]);
-      return release && release >= (MIN_SAFE_WEB_RELEASE[productName] || 1) && (!best || release > best.release)
-        ? {item, release} : best;
-    }, null)?.item;
-    if(!asset) throw new Error(tr(`No published ${productName} slot ${target} image was found.`, `Không tìm thấy firmware ${productName} đã phát hành cho slot ${target}.`));
+    const latest=await findLatestPublishedAsset(productName, target);
+    if(!latest) throw new Error(tr(`No published ${productName} slot ${target} image was found.`, `Không tìm thấy firmware ${productName} đã phát hành cho slot ${target}.`));
+    const asset=latest.item;
     const response=await fetch(asset.path,{cache:'no-store'});
     if(!response.ok) throw new Error(`Firmware asset download failed (${response.status}).`);
     const bytes=new Uint8Array(await response.arrayBuffer());
