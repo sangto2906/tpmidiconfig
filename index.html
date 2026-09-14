@@ -25,6 +25,12 @@
       </div>
     </section>
 
+    <nav class="view-tabs" role="tablist" aria-label="Configuration views" data-i18n-aria="viewTabs">
+      <button id="configTab" class="view-tab" type="button" role="tab" aria-selected="true" aria-controls="configView" data-i18n="configTab">Config</button>
+      <button id="guideTab" class="view-tab" type="button" role="tab" aria-selected="false" aria-controls="guideView" data-i18n="guideTab">Guide</button>
+    </nav>
+
+    <div id="configView" role="tabpanel" aria-labelledby="configTab">
     <section class="workspace">
       <aside class="panel surface-panel">
         <h2 data-i18n="surface">Controller surface</h2>
@@ -171,6 +177,11 @@
         <button id="factoryReset" class="danger" type="button" data-i18n="resetConfig">Reset configuration</button>
       </div>
     </section>
+    </div>
+
+    <section id="guideView" class="guide-view hidden" role="tabpanel" aria-labelledby="guideTab">
+      <div id="messageGuide" class="message-guide"></div>
+    </section>
   </main>
 
 <script src="firmware-update.js"></script>
@@ -183,7 +194,10 @@ const copy = {
 // interface remains translated, but names printed on the hardware stay English.
 Object.assign(copy.en, {
   hero: 'Configure controls<br>for your DAW.',
-  intro: 'Choose a DAW profile, then map sliders and encoders.'
+  intro: 'Choose a DAW profile, then map sliders and encoders.',
+  configTab: 'Config',
+  guideTab: 'Guide',
+  viewTabs: 'Configuration views'
 });
 Object.assign(copy.vi, {
   controller: 'Controller',
@@ -191,7 +205,10 @@ Object.assign(copy.vi, {
   tpmidiMapTitle: 'TPMidi controller surface',
   tpfaderMapTitle: 'TPFader controller surface',
   hero: 'Thiết lập control<br>cho DAW.',
-  intro: 'Chọn cấu hình DAW, rồi gán Slider và Encoder.'
+  intro: 'Chọn cấu hình DAW, rồi gán Slider và Encoder.',
+  configTab: 'Cấu hình',
+  guideTab: 'Hướng dẫn',
+  viewTabs: 'Các trang cấu hình'
 });
 let language = localStorage.getItem('tpmidi-language') === 'vi' ? 'vi' : 'en';
 const t = key => copy[language][key] || copy.en[key] || key;
@@ -214,6 +231,7 @@ function applyLanguage() {
     control.setAttribute('aria-label', tr(`Select ${label} ${kind === 'button' ? 'SW' : kind === 'encoder' ? 'E' : 'S'}${Number(number) + 1}`, `Chọn ${label} ${kind === 'button' ? 'SW' : kind === 'encoder' ? 'E' : 'S'}${Number(number) + 1}`));
   });
   render(configState);
+  if (activeView === 'guide') renderMessageGuide();
 }
 const MFR = 0x7D, PRODUCT = [0x54, 0x4D];
 const CMD = { GET: 0x20, PROFILE: 0x21, SLIDER: 0x22, ENCODER: 0x23, SAVE: 0x24 };
@@ -279,6 +297,34 @@ const updater = new TPMidiUpdater(frame => {
 const status = (message, state = '') => { const el = document.querySelector('#status'); el.textContent = message; el.className = `status ${state}`; };
 const optionsFor = options => value => options.map(([label, id]) => `<option value="${id}" ${Number(value) === id ? 'selected' : ''}>${label}</option>`).join('');
 const selectedProfile = () => profileDefinitions[Number(document.querySelector('#profile').value)] || profileDefinitions[0];
+let activeView = 'config';
+function setActiveView(view) {
+  activeView = view === 'guide' ? 'guide' : 'config';
+  document.querySelector('#configView').classList.toggle('hidden', activeView !== 'config');
+  document.querySelector('#guideView').classList.toggle('hidden', activeView !== 'guide');
+  document.querySelector('#configTab').setAttribute('aria-selected', String(activeView === 'config'));
+  document.querySelector('#guideTab').setAttribute('aria-selected', String(activeView === 'guide'));
+  if (activeView === 'guide') renderMessageGuide();
+}
+function guideRows(rows, showEnglishFunction) {
+  return rows.map(row => showEnglishFunction
+    ? `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td></tr>`
+    : `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join('');
+}
+function renderMessageGuide() {
+  const vi = language === 'vi';
+  const text = vi ? {
+    title: 'Hướng dẫn thông điệp Cubase', lead: 'TPMidi gửi thao tác encoder qua cổng MIDI TPMidi. Slider gửi Control Change qua MIDIIN.', setup: 'Thiết lập Cubase', setupText: 'Cài script TPMidi, chọn cổng TPMidi cho MIDI Remote. Dùng MIDIIN làm MIDI Input của track khi muốn thu hoặc điều khiển bằng Slider.', rotate: 'Xoay encoder', press: 'Nhấn encoder', id: 'Mã', englishFunction: 'Chức năng (English)', action: 'Chức năng', detail: 'Trong Cubase', note: 'Xoay theo chiều kim đồng hồ luôn tăng hoặc tiến; ngược chiều luôn giảm hoặc lùi.',
+    rotary: [[1,'Select Previous / Next Track','Chọn track trước / sau','Mixer track selection'],[2,'Navigate Left / Right','Điều hướng trái / phải','Navigate'],[3,'Locate Previous / Next Marker','Đến marker trước / sau','Locate marker'],[4,'Tempo - / + 1 BPM','Giảm / tăng tempo 1 BPM','1–999 BPM'],[5,'Zoom Out / Zoom In','Thu nhỏ / phóng to ngang','Zoom'],[6,'Zoom Out / Zoom In Vertically','Thu nhỏ / phóng to dọc','Vertical zoom'],[7,'Selected Track Volume','Âm lượng track đang chọn','Bước 0,02'],[8,'Nudge -1 Frame / Nudge +1 Frame','Dịch -/+ 1 frame','Nudge frame'],[9,'Selected Track Pan','Pan track đang chọn','Bước 0,02'],['27–34','Quick Control 1–8','Điều khiển nhanh 1–8','Bước 0,01'],['35–42','Send 1–8 Level','Mức Send 1–8','Bước 0,01']],
+    presses: [[3,'Start/Stop','Bắt đầu / dừng phát','Transport StartStop'],[27,'Return to Start Position','Trở về vị trí bắt đầu','Return to Start Position'],[4,'Record','Bật / tắt ghi âm','Transport Record'],[5,'Undo','Hoàn tác','Undo'],[6,'Redo','Làm lại','Redo'],[7,'Stop','Dừng','Stop'],[8,'Cycle Active','Bật / tắt Cycle','Cycle Active'],[9,'Metronome Active','Bật / tắt metronome','Metronome Active'],[10,'Insert Marker','Chèn marker','Insert Marker'],[16,'Save','Lưu dự án','Save'],[19,'Mute','Tắt tiếng track đang chọn','Mute'],[20,'Solo','Solo track đang chọn','Solo'],[21,'Record Enable','Cho phép ghi trên track','Record Enable'],[22,'Go to Project Start','Về đầu dự án','Return to Zero'],[23,'Goto End','Đến cuối dự án','Goto End'],[24,'Auto Punch In','Bật / tắt Auto Punch In','Auto Punch In'],[25,'Auto Punch Out','Bật / tắt Auto Punch Out','Auto Punch Out'],[26,'Open/Close Browser','Mở / đóng Browser','Open Browser']]
+  } : {
+    title: 'Cubase message guide', lead: 'TPMidi sends encoder actions through the TPMidi MIDI port. Sliders send Control Change through MIDIIN.', setup: 'Cubase setup', setupText: 'Install the TPMidi script and select the TPMidi port for MIDI Remote. Use MIDIIN as a track MIDI Input when recording or controlling with sliders.', rotate: 'Encoder rotation', press: 'Encoder press', id: 'ID', action: 'Function', detail: 'In Cubase', note: 'Clockwise always increases or moves forward; counter-clockwise always decreases or moves back.',
+    rotary: [[1,'Select previous / next track','Mixer track selection'],[2,'Navigate left / right','Navigate'],[3,'Locate previous / next marker','Locate marker'],[4,'Tempo - / + 1 BPM','1–999 BPM'],[5,'Zoom out / in horizontally','Zoom'],[6,'Zoom out / in vertically','Vertical zoom'],[7,'Selected track volume','0.02 step'],[8,'Nudge -/+ 1 frame','Nudge frame'],[9,'Selected track pan','0.02 step'],['27–34','Quick Control 1–8','0.01 step'],['35–42','Send 1–8 level','0.01 step']],
+    presses: [[3,'Start / Stop','Transport StartStop'],[27,'Return to Start Position','Return to Start Position'],[4,'Record on / off','Transport Record'],[5,'Undo','Undo'],[6,'Redo','Redo'],[7,'Stop','Stop'],[8,'Cycle on / off','Cycle Active'],[9,'Metronome on / off','Metronome Active'],[10,'Insert marker','Insert Marker'],[16,'Save project','Save'],[19,'Mute selected track','Mute'],[20,'Solo selected track','Solo'],[21,'Record-enable selected track','Record Enable'],[22,'Go to project start','Return to Zero'],[23,'Go to project end','Goto End'],[24,'Auto Punch In on / off','Auto Punch In'],[25,'Auto Punch Out on / off','Auto Punch Out'],[26,'Open / close Browser','Open Browser']]
+  };
+  const table = rows => `<div class="guide-table-wrap"><table><thead><tr><th>${text.id}</th>${vi ? `<th>${text.englishFunction}</th>` : ''}<th>${text.action}</th><th>${text.detail}</th></tr></thead><tbody>${guideRows(rows, vi)}</tbody></table></div>`;
+  document.querySelector('#messageGuide').innerHTML = `<header class="guide-heading"><p class="guide-kicker">TPMidi · Cubase 15</p><h2>${text.title}</h2><p>${text.lead}</p></header><section class="guide-setup"><h3>${text.setup}</h3><p>${text.setupText}</p></section><section class="guide-section"><h3>${text.rotate}</h3><p>${text.note}</p>${table(text.rotary)}</section><section class="guide-section"><h3>${text.press}</h3>${table(text.presses)}</section>`;
+}
 // The selected DAW is already shown in the profile field. Keep control menus
 // compact by showing only the action, not a repeated DAW-name prefix.
 const controlActionLabel = label => label.replace(/^[^:]+:\s*/, '');
@@ -685,6 +731,8 @@ document.querySelector('#factoryReset').onclick=async()=>{
 };
 document.querySelector('#connect').addEventListener('click', connect); document.querySelector('#read').addEventListener('click', readDevice); document.querySelector('#save').addEventListener('click', saveDevice);
 document.querySelector('#saveUserProfile').addEventListener('click', saveSelectedUserProfile);
+document.querySelector('#configTab').addEventListener('click', () => setActiveView('config'));
+document.querySelector('#guideTab').addEventListener('click', () => setActiveView('guide'));
 document.querySelector('#loadUserProfile').addEventListener('click', loadSelectedUserProfile);
 document.querySelector('#language').addEventListener('change', event => { language = event.target.value; localStorage.setItem('tpmidi-language', language); applyLanguage(); });
 document.querySelector('#deviceType').addEventListener('change', async event => {

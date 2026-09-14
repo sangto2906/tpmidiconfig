@@ -1,4 +1,5 @@
 {
+  "product": "TPMidi",
   "assets": [
     {
       "name": "TPMidi_release_28_A.tmim",
@@ -11,6 +12,5 @@
       "release": "tpmidi-v28"
     }
   ],
-  "generated": "2026-09-14T08:14:58.8251004Z",
-  "product": "TPMidi"
+  "generated": "2026-09-14T09:42:16.5626901Z"
 }
