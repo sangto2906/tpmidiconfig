@@ -1,5 +1,4 @@
 {
-  "generated": "2026-09-14T07:35:16.8502185Z",
   "product": "TPFader",
   "assets": [
     {
@@ -32,5 +31,6 @@
       "path": "firmware/tpfader/TPFader_release_12_B.tmim",
       "release": "tpfader-v12"
     }
-  ]
+  ],
+  "generated": "2026-09-14T07:52:12.0393451Z"
 }

@@ -279,8 +279,11 @@ const updater = new TPMidiUpdater(frame => {
 const status = (message, state = '') => { const el = document.querySelector('#status'); el.textContent = message; el.className = `status ${state}`; };
 const optionsFor = options => value => options.map(([label, id]) => `<option value="${id}" ${Number(value) === id ? 'selected' : ''}>${label}</option>`).join('');
 const selectedProfile = () => profileDefinitions[Number(document.querySelector('#profile').value)] || profileDefinitions[0];
-const rotaryOptions = value => optionsFor(selectedProfile().rotary)(value);
-const pressOptions = value => optionsFor(selectedProfile().press)(value);
+// The selected DAW is already shown in the profile field. Keep control menus
+// compact by showing only the action, not a repeated DAW-name prefix.
+const controlActionLabel = label => label.replace(/^[^:]+:\s*/, '');
+const rotaryOptions = value => optionsFor(selectedProfile().rotary.map(([label, id]) => [controlActionLabel(label), id]))(value);
+const pressOptions = value => optionsFor(selectedProfile().press.map(([label, id]) => [controlActionLabel(label), id]))(value);
 const ccOptions = value => Array.from({length: 128}, (_, n) => `<option value="${n}" ${Number(value) === n ? 'selected' : ''}>CC ${n}</option>`).join('');
 const activeProduct = () => deviceType === 'tpfader' ? [0x54, 0x46] : PRODUCT;
 const activePortName = () => deviceType === 'tpfader' ? 'TPFader' : 'TPMidi';
