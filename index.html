@@ -641,10 +641,10 @@ async function startLatestFirmwareUpdate() {
     const releaseNumber=view.getUint32(6,true);
     if(bytes[5] !== (target==='A'?0:1)) throw new Error('Release asset targets the wrong slot.');
     if(releaseNumber<=Math.max(...state.releases)) throw new Error(`${productName} already has release ${Math.max(...state.releases)} or newer.`);
-    document.querySelector('#firmwareState').textContent=`Downloading release ${releaseNumber}...`;
-    setOled(`Release ${releaseNumber}`, 'Downloading…');
+    document.querySelector('#firmwareState').textContent=tr(`Downloading release ${releaseNumber}...`, `Đang tải bản phát hành ${releaseNumber}...`);
+    setOled(tr(`Release ${releaseNumber}`, `Bản phát hành ${releaseNumber}`), tr('Downloading…', 'Đang tải…'));
     await updater.uploadBytes(bytes,firmwareProgress);
-    document.querySelector('#firmwareState').textContent=`Release ${releaseNumber} verified. Select "Restart to test update" to boot it.`;setOled(`Release ${releaseNumber}`, 'Verified · restart', 1);
+    document.querySelector('#firmwareState').textContent=tr(`Release ${releaseNumber} verified. Select "Restart to test update" to boot it.`, `Đã xác minh bản phát hành ${releaseNumber}. Chọn "Khởi động lại để kiểm tra bản cập nhật" để khởi động.`);setOled(tr(`Release ${releaseNumber}`, `Bản phát hành ${releaseNumber}`), tr('Verified · restart', 'Đã xác minh · khởi động lại'), 1);
   } catch(error) {firmwareError(error);}
   finally {button.disabled=false;}
 }
