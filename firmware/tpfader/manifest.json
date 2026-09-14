@@ -1,35 +1,36 @@
 {
+  "generated": "2026-09-14T07:35:16.8502185Z",
+  "product": "TPFader",
   "assets": [
     {
       "name": "TPFader_release_14_A.tmim",
-      "path": "firmware/TPFader_release_14_A.tmim",
+      "path": "firmware/tpfader/TPFader_release_14_A.tmim",
       "release": "tpfader-v14"
     },
     {
       "name": "TPFader_release_14_B.tmim",
-      "path": "firmware/TPFader_release_14_B.tmim",
+      "path": "firmware/tpfader/TPFader_release_14_B.tmim",
       "release": "tpfader-v14"
     },
     {
       "name": "TPFader_release_13_A.tmim",
-      "path": "firmware/TPFader_release_13_A.tmim",
+      "path": "firmware/tpfader/TPFader_release_13_A.tmim",
       "release": "tpfader-v13"
     },
     {
       "name": "TPFader_release_13_B.tmim",
-      "path": "firmware/TPFader_release_13_B.tmim",
+      "path": "firmware/tpfader/TPFader_release_13_B.tmim",
       "release": "tpfader-v13"
     },
     {
       "name": "TPFader_release_12_A.tmim",
-      "path": "firmware/TPFader_release_12_A.tmim",
+      "path": "firmware/tpfader/TPFader_release_12_A.tmim",
       "release": "tpfader-v12"
     },
     {
       "name": "TPFader_release_12_B.tmim",
-      "path": "firmware/TPFader_release_12_B.tmim",
+      "path": "firmware/tpfader/TPFader_release_12_B.tmim",
       "release": "tpfader-v12"
     }
-  ],
-  "generated": "2026-09-14T00:17:47.3340428Z"
+  ]
 }

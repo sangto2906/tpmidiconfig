@@ -10,13 +10,13 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand">TPMidi Configuration</div>
-      <div class="topbar-tools"><output id="status" class="status" data-i18n="statusStart">Connect TPMidi to begin.</output><label class="language-picker"><span data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">En</option><option value="vi">VI</option></select></label></div>
+      <div class="topbar-tools"><output id="status" class="status" data-i18n="statusStart">Connect TPMidi to begin.</output><label class="language-picker"><span data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">en</option><option value="vi">vi</option></select></label></div>
     </header>
 
     <section class="intro">
       <div>
-        <h1 data-i18n="hero">Map the surface<br>before the DAW.</h1>
-        <p data-i18n="intro">Select a DAW profile, assign three slider CCs and define one rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.</p>
+        <h1 data-i18n="hero">Configure controls<br>for your DAW.</h1>
+        <p data-i18n="intro">Choose a DAW profile, then map sliders and encoders.</p>
       </div>
       <div class="connection">
           <label><span data-i18n="controller">Controller</span><select id="deviceType" data-i18n-aria="controller" aria-label="Controller"><option value="tpmidi">TPMidi</option><option value="tpfader">TPFader</option></select></label>
@@ -179,9 +179,27 @@ const copy = {
   en: {language:'Language', controller:'Controller', statusStart:'Connect TPMidi to begin.', hero:'Map the surface<br>before the DAW.', intro:'Select a DAW profile, assign three slider CCs, and define a rotary target and press action for every encoder. Clockwise always increases; counter-clockwise always decreases.', midiPort:'TPMidi MIDI port', selectPort:'Select TPMidi...', connect:'Connect', disconnect:'Disconnect', surface:'Controller surface', tpmidiMapTitle:'TPMidi controller surface', tpmidiMapDesc:'Select a slider or encoder to configure its mapping.', tpfaderMapTitle:'TPFader controller surface', tpfaderMapDesc:'Three vertical faders above three assignable buttons. Select a control to configure it.', editor:'Control editor', editorHint:'Choose a DAW profile, then select a control on the surface to edit it.', read:'Read device', save:'Save to TPMidi', profile:'DAW profile', userProfile:'User profile', userProfiles:'TPFader user profiles', loadUserProfile:'Load profile', saveUserProfile:'Save current mapping', userProfileHint:'Profiles are stored in TPFader. Firmware updates preserve them; Factory reset clears them.', firmware:'Firmware update', signedFirmwareFile:'Signed firmware file', firmwareProgress:'Firmware update progress', updateLatest:'Update latest release', manualFile:'Use manual file (recovery)', abort:'Abort upload', restart:'Restart to test update', factoryReset:'Factory reset', factoryHint:'Erase saved mappings and restore the device defaults.', resetConfig:'Reset configuration'},
   vi: {language:'Ngôn ngữ', controller:'Bộ điều khiển', statusStart:'Kết nối TPMidi để bắt đầu.', hero:'Thiết lập bề mặt điều khiển<br>trước khi mở DAW.', intro:'Chọn cấu hình DAW, gán CC cho ba Slider và thiết lập thao tác xoay/nhấn cho từng encoder. Xoay theo chiều kim đồng hồ để tăng, ngược chiều để giảm.', midiPort:'Cổng MIDI TPMidi', selectPort:'Chọn TPMidi...', connect:'Kết nối', disconnect:'Ngắt kết nối', surface:'Bề mặt điều khiển', tpmidiMapTitle:'Bề mặt điều khiển TPMidi', tpmidiMapDesc:'Chọn Slider hoặc encoder để cấu hình mapping.', tpfaderMapTitle:'Bề mặt điều khiển TPFader', tpfaderMapDesc:'Ba fader dọc và ba nút có thể gán. Chọn một điều khiển để cấu hình.', editor:'Trình chỉnh sửa điều khiển', editorHint:'Chọn cấu hình DAW, sau đó chọn một điều khiển trên bề mặt để chỉnh sửa.', read:'Đọc thiết bị', save:'Lưu vào TPMidi', profile:'Cấu hình DAW', userProfile:'Cấu hình người dùng', userProfiles:'Các cấu hình người dùng của TPFader', loadUserProfile:'Tải cấu hình', saveUserProfile:'Lưu mapping hiện tại', userProfileHint:'Các cấu hình được lưu trong TPFader. Cập nhật firmware không xóa chúng; khôi phục mặc định sẽ xóa.', firmware:'Cập nhật firmware', signedFirmwareFile:'Tệp firmware đã ký', firmwareProgress:'Tiến trình cập nhật firmware', updateLatest:'Cập nhật bản phát hành mới nhất', manualFile:'Dùng tệp thủ công (khôi phục)', abort:'Hủy tải lên', restart:'Khởi động lại để kiểm tra bản cập nhật', factoryReset:'Khôi phục mặc định', factoryHint:'Xóa các mapping đã lưu và khôi phục cài đặt mặc định của thiết bị.', resetConfig:'Đặt lại cấu hình'}
 };
+// Keep controller terminology consistent in both languages. The rest of the
+// interface remains translated, but names printed on the hardware stay English.
+Object.assign(copy.en, {
+  hero: 'Configure controls<br>for your DAW.',
+  intro: 'Choose a DAW profile, then map sliders and encoders.'
+});
+Object.assign(copy.vi, {
+  controller: 'Controller',
+  surface: 'Controller surface',
+  tpmidiMapTitle: 'TPMidi controller surface',
+  tpfaderMapTitle: 'TPFader controller surface',
+  hero: 'Thiết lập control<br>cho DAW.',
+  intro: 'Chọn cấu hình DAW, rồi gán Slider và Encoder.'
+});
 let language = localStorage.getItem('tpmidi-language') === 'vi' ? 'vi' : 'en';
 const t = key => copy[language][key] || copy.en[key] || key;
-const tr = (en, vi) => language === 'vi' ? vi : en;
+const tr = (en, vi) => {
+  if (en === 'Performance Control Change sent on MIDIIN.') return language === 'vi' ? 'Gửi CC qua MIDIIN.' : 'Sends CC on MIDIIN.';
+  if (en.includes('detected and selected automatically. Connect to continue.')) return language === 'vi' ? `${activePortName()} sẵn sàng. Kết nối.` : `${activePortName()} ready. Connect.`;
+  return language === 'vi' ? vi : en;
+};
 function applyLanguage() {
   document.documentElement.lang = language;
   document.querySelectorAll('[data-i18n]').forEach(element => { element.innerHTML = t(element.dataset.i18n); });
@@ -200,13 +218,12 @@ function applyLanguage() {
 const MFR = 0x7D, PRODUCT = [0x54, 0x4D];
 const CMD = { GET: 0x20, PROFILE: 0x21, SLIDER: 0x22, ENCODER: 0x23, SAVE: 0x24 };
 const MODE = { ACTION: 0, RELATIVE_CC: 1, NOTE: 2 };
-// Products share one repository: choose the newest release that actually
-// carries an asset for the selected product, not GitHub's global "latest".
-// Firmware is mirrored into this Pages site by the deploy workflow.  GitHub's
-// release-download redirect does not consistently expose CORS headers, whereas
-// same-origin downloads work in every supported browser.  The RP2040 still
-// verifies the signed TMIM package; this manifest is only a convenience index.
-const RELEASE_FEED_URL = 'firmware/manifest.json';
+// Each product has its own Pages catalog. This keeps independent release
+// streams separate even though their signed GitHub Releases live in one repo.
+// GitHub's release-download redirect does not consistently expose CORS headers,
+// whereas same-origin downloads work in every supported browser. The RP2040
+// still verifies the signed TMIM package; this manifest is only an index.
+const releaseFeedUrl = productName => `firmware/${productName.toLowerCase()}/manifest.json`;
 // TPFader release 8 accepted the update header but its 32-byte SysEx receive
 // buffer could not hold a 256-byte packed page.  Never offer that revoked
 // package. Releases 9 and 10 still used an 8-bit frame length and wrap at
@@ -601,7 +618,7 @@ async function startLatestFirmwareUpdate() {
     if(!state.healthy || state.pending!==255) throw new Error(`${productName} must be healthy with no pending update.`);
     const target=state.slot===0?'B':'A';
     document.querySelector('#firmwareState').textContent=`Finding latest release for slot ${target}...`;
-    const releaseResponse=await fetch(RELEASE_FEED_URL,{cache:'no-store'});
+    const releaseResponse=await fetch(releaseFeedUrl(productName),{cache:'no-store'});
     if(!releaseResponse.ok) throw new Error(`Cannot check latest release (${releaseResponse.status}).`);
     const feed=await releaseResponse.json();
     if(!feed || !Array.isArray(feed.assets)) throw new Error('Firmware feed is invalid.');
