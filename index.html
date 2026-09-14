@@ -620,7 +620,7 @@ async function startLatestFirmwareUpdate() {
     const state=await updater.request(0x40);
     if(!state.healthy || state.pending!==255) throw new Error(`${productName} must be healthy with no pending update.`);
     const target=state.slot===0?'B':'A';
-    document.querySelector('#firmwareState').textContent=`Finding latest release for slot ${target}...`;
+    document.querySelector('#firmwareState').textContent=tr(`Finding latest release for slot ${target}...`, `Đang tìm bản phát hành mới nhất cho slot ${target}...`);
     const releaseResponse=await fetch(releaseFeedUrl(productName),{cache:'no-store'});
     if(!releaseResponse.ok) throw new Error(`Cannot check latest release (${releaseResponse.status}).`);
     const feed=await releaseResponse.json();
@@ -632,7 +632,7 @@ async function startLatestFirmwareUpdate() {
       return release && release >= (MIN_SAFE_WEB_RELEASE[productName] || 1) && (!best || release > best.release)
         ? {item, release} : best;
     }, null)?.item;
-    if(!asset) throw new Error(`No published ${productName} slot ${target} image was found.`);
+    if(!asset) throw new Error(tr(`No published ${productName} slot ${target} image was found.`, `Không tìm thấy firmware ${productName} đã phát hành cho slot ${target}.`));
     const response=await fetch(asset.path,{cache:'no-store'});
     if(!response.ok) throw new Error(`Firmware asset download failed (${response.status}).`);
     const bytes=new Uint8Array(await response.arrayBuffer());
