@@ -40,8 +40,8 @@ class TPMidiUpdater {
         // configuration command and replies with its one-byte error status.
         // It cannot safely receive a .tmim package; it needs one BOOTSEL
         // bootstrap install before web updates become available.
-        if (p.command === 0x40 && bytes.length === 1) {
-          throw new Error('This firmware does not support signed web updates. Install the TPFader A/B bootstrap once through BOOTSEL, then reconnect.');
+        if (p.command === 0x40 && (bytes.length === 1 || bytes.length === 13) && this.productName() === 'TPFader') {
+          throw new Error('This TPFader uses a legacy updater and cannot safely install web releases. Install the current TPFader A/B bootstrap once through BOOTSEL, then reconnect.');
         }
         throw new Error(`Invalid firmware status length (${bytes.length}).`);
       }
