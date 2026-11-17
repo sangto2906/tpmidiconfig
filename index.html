@@ -4,17 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TPMidi Configuration</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
   <link rel="stylesheet" href="config.css">
 </head>
 <body>
   <main class="shell">
     <header class="topbar">
-      <div class="brand">TPMidi Configuration</div>
+      <a class="brand" href="https://tpmidproduction.com/">TPRODUCTION</a>
       <div class="topbar-tools"><output id="status" class="status" data-i18n="statusStart">Connect TPMidi to begin.</output><label class="language-picker"><span data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">en</option><option value="vi">vi</option></select></label></div>
     </header>
 
     <section class="intro">
       <div>
+        <p class="eyebrow">TPMidi · Configuration</p>
         <h1 data-i18n="hero">Configure controls<br>for your DAW.</h1>
         <p data-i18n="intro">Choose a DAW profile, then map sliders and encoders.</p>
       </div>
@@ -116,6 +118,13 @@
             <g class="surface-control" data-control="button-1" role="button" tabindex="0" aria-pressed="false" aria-label="Select button SW2"><circle class="control-hit" cx="270" cy="572" r="54"/><circle class="button-rim" cx="270" cy="572" r="32"/><circle class="button-face control-outline" cx="270" cy="572" r="25"/><text class="surface-name" x="270" y="625" text-anchor="middle">SW2</text><text class="surface-value" data-fader-label="button-1" x="270" y="644" text-anchor="middle">RECORD</text></g>
             <g class="surface-control" data-control="button-2" role="button" tabindex="0" aria-pressed="false" aria-label="Select button SW3"><circle class="control-hit" cx="416" cy="572" r="54"/><circle class="button-rim" cx="416" cy="572" r="32"/><circle class="button-face control-outline" cx="416" cy="572" r="25"/><text class="surface-name" x="416" y="625" text-anchor="middle">SW3</text><text class="surface-value" data-fader-label="button-2" x="416" y="644" text-anchor="middle">STOP</text></g>
           </svg>
+          <svg class="surface-map tpfader-bend-map hidden" viewBox="0 0 540 456" role="group" aria-label="TPFader Bend controller surface">
+            <rect class="device-body" x="28" y="18" width="484" height="417" rx="22" />
+            <g class="surface-control" data-control="bend-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select pitch bend PB"><rect class="control-hit" x="60" y="118" width="104" height="198" rx="16"/><rect class="slider-slot" x="88" y="135" width="55" height="164" rx="6"/><rect class="slider-cap control-outline" x="80" y="202" width="71" height="30" rx="9"/><text class="surface-name" x="116" y="322" text-anchor="middle">PB</text><text class="surface-value" data-fader-label="bend-0" x="116" y="342" text-anchor="middle">Default</text></g>
+            <g class="surface-control" data-control="fader-0" role="button" tabindex="0" aria-pressed="false" aria-label="Select fader S1"><rect class="control-hit" x="244" y="86" width="88" height="262" rx="16"/><rect class="slider-track" x="277" y="96" width="22" height="242" rx="11"/><rect class="slider-slot" x="282" y="101" width="12" height="232" rx="6"/><rect class="slider-cap control-outline" x="267" y="203" width="42" height="28" rx="9"/><text class="surface-name" x="288" y="358" text-anchor="middle">S1</text><text class="surface-value" data-fader-label="fader-0" x="288" y="378" text-anchor="middle">CC 11</text></g>
+            <g class="surface-control" data-control="fader-1" role="button" tabindex="0" aria-pressed="false" aria-label="Select fader S2"><rect class="control-hit" x="325" y="86" width="88" height="262" rx="16"/><rect class="slider-track" x="358" y="96" width="22" height="242" rx="11"/><rect class="slider-slot" x="363" y="101" width="12" height="232" rx="6"/><rect class="slider-cap control-outline" x="348" y="203" width="42" height="28" rx="9"/><text class="surface-name" x="369" y="358" text-anchor="middle">S2</text><text class="surface-value" data-fader-label="fader-1" x="369" y="378" text-anchor="middle">CC 1</text></g>
+            <g class="surface-control" data-control="fader-2" role="button" tabindex="0" aria-pressed="false" aria-label="Select fader S3"><rect class="control-hit" x="406" y="86" width="88" height="262" rx="16"/><rect class="slider-track" x="439" y="96" width="22" height="242" rx="11"/><rect class="slider-slot" x="444" y="101" width="12" height="232" rx="6"/><rect class="slider-cap control-outline" x="429" y="203" width="42" height="28" rx="9"/><text class="surface-name" x="450" y="358" text-anchor="middle">S3</text><text class="surface-value" data-fader-label="fader-2" x="450" y="378" text-anchor="middle">CC 12</text></g>
+          </svg>
         </div>
       </aside>
 
@@ -183,6 +192,25 @@
       <div id="messageGuide" class="message-guide"></div>
     </section>
   </main>
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div>
+        <h2>Products</h2>
+        <a href="https://tpmidproduction.com/tpmidi">TPMidi</a>
+        <a href="https://tpmidproduction.com/tpfader">TPFader</a>
+      </div>
+      <div>
+        <h2>Company</h2>
+        <a href="https://tpmidproduction.com/about">About</a>
+        <a href="https://tpmidproduction.com/contact">Contact</a>
+      </div>
+      <div>
+        <h2>Support</h2>
+        <a href="https://tpmidproduction.com/support">Support</a>
+      </div>
+    </div>
+    <p class="copyright">&copy; 2026 TProduction</p>
+  </footer>
 
 <script src="firmware-update.js"></script>
 <script>
@@ -234,7 +262,7 @@ function applyLanguage() {
   if (activeView === 'guide') renderMessageGuide();
 }
 const MFR = 0x7D, PRODUCT = [0x54, 0x4D];
-const CMD = { GET: 0x20, PROFILE: 0x21, SLIDER: 0x22, ENCODER: 0x23, SAVE: 0x24 };
+const CMD = { GET: 0x20, PROFILE: 0x21, SLIDER: 0x22, ENCODER: 0x23, SAVE: 0x24, CALIBRATE: 0x27, RESET_CALIBRATION: 0x28, INFO: 0x29 };
 const MODE = { ACTION: 0, RELATIVE_CC: 1, NOTE: 2 };
 // Each product has its own Pages catalog. This keeps independent release
 // streams separate even though their signed GitHub Releases live in one repo.
@@ -279,6 +307,11 @@ const profileDefinitions = {
 };
 const defaultConfig = () => ({ profile: 0, sliders: [1, 11, 14], encoders: Array.from({length: 4}, () => ({mode: 0, parameter: 0, cw: 0, ccw: 0, press: 0})) });
 const defaultFaderConfig = () => ({ profile: 0, faders: [11, 1, 12], buttons: [1, 2, 3] });
+const BEND_CHANNEL = 3;
+const MODEL_TPFADER_BEND = 0x02;
+// Firmware without GET_INFO (0x29) is a plain three-fader, three-button TPFader.
+const LEGACY_FADER_INFO = {model: null, faders: 3, buttons: 3, bend: false, calibration: null};
+let deviceInfo = LEGACY_FADER_INFO;
 let deviceType = 'tpmidi', midiAccess, midiOut, midiIn, connected = false, selected = 'slider-0', waiter, configState = defaultConfig(), faderConfigState = defaultFaderConfig();
 // The selected product must not change while ports are open.  In particular,
 // reconnecting/enumerating a second controller must never turn a TPFader
@@ -360,16 +393,29 @@ function conciseAction(label, fallback) {
 }
 function rotaryLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? `CC ${mapping.parameter}` : mapping.mode === MODE.NOTE ? tr('Disabled', 'Đã tắt') : conciseAction(selectedProfile().rotary.find(([, value]) => value === mapping.parameter)?.[0], tr('Off', 'Tắt')); }
 function pressLabel(mapping) { return mapping.mode === MODE.RELATIVE_CC ? tr('Unused', 'Không dùng') : mapping.mode === MODE.NOTE ? `Note ${mapping.press}` : conciseAction(selectedProfile().press.find(([, value]) => value === mapping.press)?.[0], tr('Off', 'Tắt')); }
+function wrapSurfaceText(line, maxLength = 18) {
+  const wrapped = [];
+  let current = '';
+  line.split(' ').forEach(word => {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length <= maxLength || !current) current = candidate;
+    else { wrapped.push(current); current = word; }
+  });
+  if (current) wrapped.push(current);
+  return wrapped;
+}
 function setSurfaceDetail(index, lines) {
   const text = document.querySelector(`[data-surface-detail="encoder-${index}"]`);
   text.replaceChildren();
   const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
   title.textContent = lines.join(' · ');
   text.append(title);
-  lines.forEach((line, i) => {
+  const rows = lines.flatMap(line => wrapSurfaceText(line));
+  if (rows.length > 4) rows.splice(3, rows.length - 3, `${rows[3].slice(0, 15)}…`);
+  rows.forEach((line, i) => {
     const span = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
     span.setAttribute('x', text.getAttribute('x'));
-    span.setAttribute('dy', i ? '14' : '0');
+    span.setAttribute('dy', i ? '11' : '0');
     span.textContent = line;
     text.append(span);
   });
@@ -390,24 +436,37 @@ function faderActionOptions(value) { return optionsFor([['Disabled', 0], ['DAW: 
 const faderActions = [['Disabled', 0], ['Play / pause', 1], ['Record', 2], ['Stop', 3], ['Undo', 4], ['Redo', 5], ['Metronome', 6], ['Cycle / loop', 7], ['Previous marker', 8], ['Next marker', 9], ['Save project', 10], ['Selected track mute', 11], ['Selected track solo', 12], ['Return to zero', 13], ['Go to end', 14], ['Tap tempo', 15]];
 function faderActionName(value) { return faderActions.find(([, id]) => id === Number(value))?.[0] || 'Disabled'; }
 function faderActionOptions(value) { const profile = profiles()[Number(faderConfigState.profile)] || tr('Generic MIDI', 'MIDI chung'); return optionsFor(faderActions.map(([label, id]) => [id ? `${profile}: ${label}` : label, id]))(value); }
+function faderLayout() { return deviceInfo.model === MODEL_TPFADER_BEND ? 'bend' : 'buttons'; }
+function faderSurface() { return document.querySelector(faderLayout() === 'bend' ? '.tpfader-bend-map' : '.tpfader-map'); }
+function showFaderSurface(fader) {
+  document.querySelector('.tpmidi-map').classList.toggle('hidden', fader);
+  document.querySelector('.tpfader-map').classList.toggle('hidden', !fader || faderLayout() !== 'buttons');
+  document.querySelector('.tpfader-bend-map').classList.toggle('hidden', !fader || faderLayout() !== 'bend');
+}
 function renderFaderSurface() {
-  faderConfigState.faders.forEach((cc, index) => document.querySelector(`[data-fader-label="fader-${index}"]`).textContent = `CC ${cc}`);
-  faderConfigState.buttons.forEach((action, index) => document.querySelector(`[data-fader-label="button-${index}"]`).textContent = conciseAction(faderActionName(action), 'OFF'));
+  const map = faderSurface();
+  faderConfigState.faders.forEach((cc, index) => map.querySelector(`[data-fader-label="fader-${index}"]`).textContent = `CC ${cc}`);
+  if (faderLayout() === 'bend') map.querySelector('[data-fader-label="bend-0"]').textContent = deviceInfo.calibration?.[BEND_CHANNEL] ? tr('Calibrated', 'Đã hiệu chỉnh') : tr('Default', 'Mặc định');
+  else faderConfigState.buttons.forEach((action, index) => map.querySelector(`[data-fader-label="button-${index}"]`).textContent = conciseAction(faderActionName(action), 'OFF'));
+  showFaderSurface(true);
 }
 function renderControlEditor() {
   const editor = document.querySelector('#controlEditor');
   const [kind, indexText] = selected.split('-'), index = Number(indexText);
   if (deviceType === 'tpfader') {
     if (kind === 'fader') {
-      editor.innerHTML = `<div class="editor-heading"><h2>Fader S${index + 1}</h2><p>${tr('Performance Control Change sent on MIDIIN.', 'Gửi Control Change hiệu năng qua MIDIIN.')}</p></div><label>Control Change<select data-fader-editor="fader" data-index="${index}">${ccOptions(faderConfigState.faders[index])}</select></label><p class="hint">${tr('The fader uses the full RP2040 12-bit ADC range.', 'Fader sử dụng toàn bộ dải ADC 12-bit của RP2040.')}</p>`;
+      editor.innerHTML = `<div class="editor-heading"><h2>Fader S${index + 1}</h2><p>${tr('Performance Control Change sent on MIDIIN.', 'Gửi Control Change hiệu năng qua MIDIIN.')}</p></div><label>Control Change<select data-fader-editor="fader" data-index="${index}">${ccOptions(faderConfigState.faders[index])}</select></label><p class="hint">${tr('The fader uses the full RP2040 12-bit ADC range unless calibrated.', 'Fader dùng toàn bộ dải ADC 12-bit của RP2040 trừ khi đã hiệu chỉnh.')}</p>${calibrationSection(index)}`;
+    } else if (kind === 'bend') {
+      editor.innerHTML = `<div class="editor-heading"><h2>Pitch bend</h2><p>${tr('Fixed 14-bit pitch bend on MIDIIN, channel 1. Not configurable.', 'Pitch bend 14-bit cố định trên MIDIIN, kênh 1. Không thể cấu hình.')}</p></div>${calibrationSection(BEND_CHANNEL)}`;
     } else {
       editor.innerHTML = `<div class="editor-heading"><h2>${tr('Button', 'Nút')} SW${index + 1}</h2><p>${tr('One DAW SysEx action is sent only on press; no MIDI notes are emitted.', 'Một thao tác SysEx của DAW chỉ được gửi khi nhấn; không gửi MIDI note.')}</p></div><label>${tr('DAW action', 'Thao tác DAW')}<select data-fader-editor="button" data-index="${index}">${faderActionOptions(faderConfigState.buttons[index])}</select></label>`;
     }
-    editor.querySelector('[data-fader-editor]').addEventListener('change', event => {
+    editor.querySelector('[data-fader-editor]')?.addEventListener('change', event => {
       const target = event.currentTarget, targetIndex = Number(target.dataset.index);
       faderConfigState[target.dataset.faderEditor === 'fader' ? 'faders' : 'buttons'][targetIndex] = Number(target.value);
       renderFaderSurface();
     });
+    bindCalibration(editor);
     return;
   }
   if (kind === 'slider') {
@@ -418,7 +477,7 @@ function renderControlEditor() {
     const parameter = isAction ? rotaryOptions(mapping.parameter) : '<option value="0">0</option>';
     const press = isAction || isRelative ? pressOptions(mapping.press) : noteOptions(mapping.press);
     const vi = language === 'vi';
-    editor.innerHTML = `<div class="editor-heading"><h2>Encoder E${index + 1}</h2><p>${vi ? 'Thiết lập thao tác xoay và nhấn cho control này.' : 'Configure rotary and press behaviour for this control.'}</p></div><div class="fields"><label class="full">${vi ? 'Loại thông điệp' : 'Message type'}<select data-editor="encoder" data-index="${index}" data-field="mode"><option value="0" ${mapping.mode === 0 ? 'selected' : ''}>DAW action (SysEx / Mackie)</option><option value="1" ${mapping.mode === 1 ? 'selected' : ''}>Relative CC</option><option value="2" ${mapping.mode === 2 ? 'selected' : ''}>MIDI notes</option></select></label><label>${isAction ? (vi ? 'Xoay' : 'Rotary target') : isRelative ? (vi ? 'Số CC' : 'CC number') : (vi ? 'Xoay đã tắt' : 'Rotary disabled')}<select data-editor="encoder" data-index="${index}" data-field="parameter" ${isAction || isRelative ? '' : 'disabled'}>${isAction ? parameter : isRelative ? ccOptions(mapping.parameter) : parameter}</select></label><label class="full">${isAction ? (vi ? 'Nhấn' : 'Press action') : isRelative ? (vi ? 'Không dùng' : 'Unused') : (vi ? 'Nốt khi nhấn' : 'Press note')}<select data-editor="encoder" data-index="${index}" data-field="press" ${isRelative ? 'disabled' : ''}>${press}</select></label></div>`;
+    editor.innerHTML = `<div class="editor-heading"><h2>Encoder E${index + 1}</h2><p>${vi ? 'Thiết lập thao tác xoay và nhấn cho control này.' : 'Configure rotary and press behaviour for this control.'}</p></div><div class="fields"><label class="full">${vi ? 'Loại thông điệp' : 'Message type'}<select data-editor="encoder" data-index="${index}" data-field="mode"><option value="0" ${mapping.mode === 0 ? 'selected' : ''}>DAW action (SysEx / Mackie)</option><option value="1" ${mapping.mode === 1 ? 'selected' : ''}>CC value 0–127</option><option value="2" ${mapping.mode === 2 ? 'selected' : ''}>MIDI notes</option></select></label><label>${isAction ? (vi ? 'Xoay' : 'Rotary target') : isRelative ? (vi ? 'Số CC' : 'CC number') : (vi ? 'Xoay đã tắt' : 'Rotary disabled')}<select data-editor="encoder" data-index="${index}" data-field="parameter" ${isAction || isRelative ? '' : 'disabled'}>${isAction ? parameter : isRelative ? ccOptions(mapping.parameter) : parameter}</select></label><label class="full">${isAction ? (vi ? 'Nhấn' : 'Press action') : isRelative ? (vi ? 'Không dùng' : 'Unused') : (vi ? 'Nốt khi nhấn' : 'Press note')}<select data-editor="encoder" data-index="${index}" data-field="press" ${isRelative ? 'disabled' : ''}>${press}</select></label></div>`;
   }
   editor.querySelectorAll('[data-editor]').forEach(el => el.addEventListener('change', event => {
     const target = event.currentTarget, index = Number(target.dataset.index), value = Number(target.value);
@@ -429,10 +488,56 @@ function renderControlEditor() {
   }));
 }
 
+async function readDeviceInfo() {
+  const reply = await request(CMD.INFO);
+  if (!reply || reply.length < 12 || reply[4] !== 1) return null;
+  return {model: reply[12], faders: reply[5], buttons: reply[6], bend: reply[7] === 1, calibration: reply.slice(8, 12)};
+}
+function usableFaderControl(id) {
+  if (id.startsWith('button-')) return deviceInfo.buttons ? id : 'fader-0';
+  if (id.startsWith('bend-')) return deviceInfo.bend ? id : 'fader-0';
+  return id.startsWith('fader-') ? id : 'fader-0';
+}
+function calibrationSection(channel) {
+  if (!deviceInfo.calibration) return '';
+  const mask = deviceInfo.calibration[channel];
+  const points = channel === BEND_CHANNEL ? [[0, 'Min', 'Min'], [1, 'Natural', 'Tự nhiên'], [2, 'Max', 'Max']] : [[0, 'Min', 'Min'], [2, 'Max', 'Max']];
+  const buttons = points.map(([point, en, vi]) => `<button type="button" data-calibrate="${channel}" data-point="${point}"${connected ? '' : ' disabled'}>${tr(en, vi)}${mask & (1 << point) ? ' ✓' : ''}</button>`).join('');
+  const note = channel === BEND_CHANNEL
+    ? `<p class="calibration-note">${tr('Natural sets the centre. Max is full pitch up, Min is full pitch down. Hold the lever at each position before pressing.', 'Tự nhiên đặt điểm giữa. Max là pitch bend lên hết, Min là xuống hết. Giữ cần ở từng vị trí trước khi nhấn.')}</p>`
+    : '';
+  return `<div class="calibration"><h3>${tr('Calibration', 'Hiệu chỉnh')}</h3>${note}<div class="actions">${buttons}<button type="button" data-calibrate-reset="all"${connected ? '' : ' disabled'}>${tr('Reset all calibration', 'Đặt lại toàn bộ hiệu chỉnh')}</button></div></div>`;
+}
+function bindCalibration(editor) {
+  editor.querySelectorAll('[data-calibrate]').forEach(button => button.addEventListener('click', () => captureCalibrationPoint(Number(button.dataset.calibrate), Number(button.dataset.point))));
+  editor.querySelectorAll('[data-calibrate-reset]').forEach(button => button.addEventListener('click', resetAllCalibration));
+}
+async function captureCalibrationPoint(channel, point) {
+  if (!connected || deviceType !== 'tpfader') return status(tr('Connect TPFader first.', 'Hãy kết nối TPFader trước.'), 'error');
+  try {
+    const reply = await request(CMD.CALIBRATE, [channel, point]);
+    if (!reply || reply[4] !== 0) throw new Error(tr('TPFader did not accept this position. Check the range of travel and try again.', 'TPFader không chấp nhận vị trí này. Kiểm tra dải chuyển động và thử lại.'));
+    deviceInfo = (await readDeviceInfo()) || LEGACY_FADER_INFO;
+    renderFaderSurface(); renderControlEditor();
+    status(tr('Calibration point saved to TPFader.', 'Đã lưu điểm hiệu chỉnh vào TPFader.'), 'ok');
+  } catch (error) { status(error.message, 'error'); }
+}
+async function resetAllCalibration() {
+  if (!connected || deviceType !== 'tpfader') return status(tr('Connect TPFader first.', 'Hãy kết nối TPFader trước.'), 'error');
+  if (!confirm(tr('Reset calibration of all sliders and pitch bend to the factory range?', 'Đặt lại hiệu chỉnh của tất cả fader và pitch bend về dải mặc định?'))) return;
+  try {
+    const reply = await request(CMD.RESET_CALIBRATION);
+    if (!reply || reply[4] !== 0) throw new Error(tr('TPFader could not reset calibration.', 'TPFader không thể đặt lại hiệu chỉnh.'));
+    deviceInfo = (await readDeviceInfo()) || LEGACY_FADER_INFO;
+    renderFaderSurface(); renderControlEditor();
+    status(tr('Calibration reset to the factory range.', 'Đã đặt lại hiệu chỉnh về dải mặc định.'), 'ok');
+  } catch (error) { status(error.message, 'error'); }
+}
+
 function selectControl(id) {
   selected = id;
-  const map = deviceType === 'tpfader' ? '.tpfader-map' : '.tpmidi-map';
-  document.querySelectorAll(`${map} .surface-control`).forEach(el => { const isSelected = el.dataset.control === id; el.dataset.selected = String(isSelected); el.setAttribute('aria-pressed', String(isSelected)); });
+  const map = deviceType === 'tpfader' ? faderSurface() : document.querySelector('.tpmidi-map');
+  map.querySelectorAll('.surface-control').forEach(el => { const isSelected = el.dataset.control === id; el.dataset.selected = String(isSelected); el.setAttribute('aria-pressed', String(isSelected)); });
   renderControlEditor();
   document.querySelector('#controlEditor')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
@@ -458,8 +563,7 @@ function detectedDeviceTypes() {
 function applyDetectedDeviceType(type) {
   deviceType = type; document.querySelector('#deviceType').value = type;
   const fader = type === 'tpfader';
-  document.querySelector('.tpmidi-map').classList.toggle('hidden', fader);
-  document.querySelector('.tpfader-map').classList.toggle('hidden', !fader);
+  showFaderSurface(fader);
   document.querySelector('.brand').textContent = tr(`${activePortName()} Configuration`, `Cấu hình ${activePortName()}`);
   document.querySelector('[data-i18n="midiPort"]').textContent = tr(`${activePortName()} MIDI port`, `Cổng MIDI ${activePortName()}`);
   document.querySelector('#save').textContent = tr(`Save to ${activePortName()}`, `Lưu vào ${activePortName()}`);
@@ -554,8 +658,9 @@ async function readDevice() {
     if (reply.length < 11 || (reply[4] !== 1 && reply[4] !== 2 && reply[4] !== 3)) return status('No valid TPFader configuration reply.', 'error');
     const isV3 = reply[4] === 3;
     faderConfigState = isV3 ? {profile: reply[5], faders: reply.slice(6, 9), buttons: reply.slice(9, 12)} : {profile: 0, faders: reply.slice(5, 8), buttons: reply.slice(8, 11)};
+    deviceInfo = (await readDeviceInfo()) || LEGACY_FADER_INFO;
     document.querySelector('#profile').value = faderConfigState.profile;
-    renderFaderSurface(); selectControl(selected.startsWith('fader-') || selected.startsWith('button-') ? selected : 'fader-0');
+    renderFaderSurface(); selectControl(usableFaderControl(selected));
     status(tr('Loaded TPFader configuration.', 'Đã tải cấu hình TPFader.'), 'ok');
     return;
   }
@@ -582,7 +687,7 @@ async function saveDevice() {
   } catch (error) { status(error.message, 'error'); } finally { button.disabled = false; }
 }
 async function saveFaderConfiguration() {
-  for (const [command, data] of [[0x23, [faderConfigState.profile]], ...faderConfigState.faders.map((cc, index) => [0x21, [index, cc]]), ...faderConfigState.buttons.map((action, index) => [0x22, [index, action]]), [0x24, []]]) {
+  for (const [command, data] of [[0x23, [faderConfigState.profile]], ...faderConfigState.faders.map((cc, index) => [0x21, [index, cc]]), ...(deviceInfo.buttons ? faderConfigState.buttons.map((action, index) => [0x22, [index, action]]) : []), [0x24, []]]) {
     const reply = await request(command, data);
     if (!reply || reply[4] !== 0) throw new Error(`TPFader rejected command 0x${command.toString(16)}.`);
   }
@@ -739,8 +844,7 @@ document.querySelector('#deviceType').addEventListener('change', async event => 
   if (connected) await disconnect();
   deviceType = event.target.value;
   const fader = deviceType === 'tpfader';
-  document.querySelector('.tpmidi-map').classList.toggle('hidden', fader);
-  document.querySelector('.tpfader-map').classList.toggle('hidden', !fader);
+  showFaderSurface(fader);
   document.querySelector('.brand').textContent = tr(`${activePortName()} Configuration`, `Cấu hình ${activePortName()}`);
   document.querySelector('[data-i18n="midiPort"]').textContent = tr(`${activePortName()} MIDI port`, `Cổng MIDI ${activePortName()}`);
   document.querySelector('#save').textContent = tr(`Save to ${activePortName()}`, `Lưu vào ${activePortName()}`);
