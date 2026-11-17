@@ -876,7 +876,24 @@ render();
 applyLanguage();
 setConnectionControls(false);
 setOled(tr('Disconnected', 'Đã ngắt kết nối'), tr('Select MIDI port', 'Chọn cổng MIDI'));
-if (navigator.requestMIDIAccess) requestMidiPermission().catch(() => status(tr('Web MIDI SysEx permission is required.', 'Cần cấp quyền Web MIDI SysEx.'), 'error')); else status(tr('This browser does not support Web MIDI.', 'Trình duyệt này không hỗ trợ Web MIDI.'), 'error');
+async function upgradeToHttps() {
+  if (location.protocol !== 'http:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') return false;
+  const secure = `https://${location.host}${location.pathname}${location.search}`;
+  try { await fetch(secure, {method: 'HEAD', mode: 'no-cors', cache: 'no-store'}); location.replace(secure); return true; }
+  catch (_) { return false; }
+}
+(async () => {
+  if (!window.isSecureContext) {
+    if (await upgradeToHttps()) return;
+    status(tr('Web MIDI needs HTTPS. Open https://config.tpmidproduction.com/ once its certificate is active.', 'Web MIDI cần HTTPS. Hãy mở https://config.tpmidproduction.com/ khi chứng chỉ đã sẵn sàng.'), 'error');
+    return;
+  }
+  if (!navigator.requestMIDIAccess) {
+    status(tr('This browser does not support Web MIDI. Use Chrome or Edge.', 'Trình duyệt này không hỗ trợ Web MIDI. Hãy dùng Chrome hoặc Edge.'), 'error');
+    return;
+  }
+  requestMidiPermission().catch(() => status(tr('Web MIDI SysEx permission is required.', 'Cần cấp quyền Web MIDI SysEx.'), 'error'));
+})();
 </script>
 </body>
 </html>
