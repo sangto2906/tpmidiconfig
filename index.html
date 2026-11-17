@@ -11,12 +11,21 @@
   <main class="shell">
     <header class="topbar">
       <a class="brand" href="https://tpmidproduction.com/">TPRODUCTION</a>
-      <div class="topbar-tools"><output id="status" class="status" data-i18n="statusStart">Connect TPMidi to begin.</output><label class="language-picker"><span data-i18n="language">Language</span><select id="language" aria-label="Language"><option value="en">en</option><option value="vi">vi</option></select></label></div>
+      <nav class="nav" aria-label="Main">
+        <a href="https://tpmidproduction.com/tpmidi">TPMidi</a>
+        <a href="https://tpmidproduction.com/tpfader">TPFader</a>
+        <a href="https://tpmidproduction.com/about"><span class="en">About</span><span class="vi">Giới thiệu</span></a>
+        <a href="https://tpmidproduction.com/support"><span class="en">Support</span><span class="vi">Hỗ trợ</span></a>
+        <a href="https://tpmidproduction.com/contact"><span class="en">Contact</span><span class="vi">Liên hệ</span></a>
+        <button type="button" class="lang-toggle" data-lang-toggle><span data-opt="en">EN</span> / <span data-opt="vi">VI</span></button>
+      </nav>
+      <select id="language" aria-label="Language" hidden><option value="en">en</option><option value="vi">vi</option></select>
     </header>
+    <p class="status-row"><output id="status" class="status" data-i18n="statusStart">Connect TPMidi to begin.</output></p>
 
     <section class="intro">
       <div>
-        <p class="eyebrow">TPMidi · Configuration</p>
+        <p class="eyebrow" id="productEyebrow">TPMidi · Configuration</p>
         <h1 data-i18n="hero">Configure controls<br>for your DAW.</h1>
         <p data-i18n="intro">Choose a DAW profile, then map sliders and encoders.</p>
       </div>
@@ -247,6 +256,8 @@ const tr = (en, vi) => {
 };
 function applyLanguage() {
   document.documentElement.lang = language;
+  document.documentElement.dataset.lang = language;
+  document.querySelector('#language').value = language;
   document.querySelectorAll('[data-i18n]').forEach(element => { element.innerHTML = t(element.dataset.i18n); });
   document.querySelectorAll('[data-i18n-aria]').forEach(element => { element.setAttribute('aria-label', t(element.dataset.i18nAria)); });
   document.querySelector('#language').value = language;
@@ -534,12 +545,12 @@ async function resetAllCalibration() {
   } catch (error) { status(error.message, 'error'); }
 }
 
-function selectControl(id) {
+function selectControl(id, scrollToEditor = false) {
   selected = id;
   const map = deviceType === 'tpfader' ? faderSurface() : document.querySelector('.tpmidi-map');
   map.querySelectorAll('.surface-control').forEach(el => { const isSelected = el.dataset.control === id; el.dataset.selected = String(isSelected); el.setAttribute('aria-pressed', String(isSelected)); });
   renderControlEditor();
-  document.querySelector('#controlEditor')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  if (scrollToEditor) document.querySelector('#controlEditor')?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
 function collectConfig() {
@@ -564,7 +575,7 @@ function applyDetectedDeviceType(type) {
   deviceType = type; document.querySelector('#deviceType').value = type;
   const fader = type === 'tpfader';
   showFaderSurface(fader);
-  document.querySelector('.brand').textContent = tr(`${activePortName()} Configuration`, `Cấu hình ${activePortName()}`);
+  document.querySelector('#productEyebrow').textContent = tr(`${activePortName()} · Configuration`, `${activePortName()} · Cấu hình`);
   document.querySelector('[data-i18n="midiPort"]').textContent = tr(`${activePortName()} MIDI port`, `Cổng MIDI ${activePortName()}`);
   document.querySelector('#save').textContent = tr(`Save to ${activePortName()}`, `Lưu vào ${activePortName()}`);
   document.querySelector('#userProfileRow').classList.toggle('hidden', !fader);
@@ -716,8 +727,8 @@ async function loadSelectedUserProfile() {
 }
 
 document.querySelectorAll('.surface-control').forEach(el => {
-  el.addEventListener('click', () => selectControl(el.dataset.control));
-  el.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectControl(el.dataset.control); } });
+  el.addEventListener('click', () => selectControl(el.dataset.control, true));
+  el.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectControl(el.dataset.control, true); } });
 });
 const firmwareError=error=>{document.querySelector('#firmwareState').textContent=error.message;setOled(tr('Update failed', 'Cập nhật thất bại'), tr('Check firmware state', 'Kiểm tra trạng thái firmware'));};
 function renderFirmwareStatus(state) {
@@ -840,12 +851,17 @@ document.querySelector('#configTab').addEventListener('click', () => setActiveVi
 document.querySelector('#guideTab').addEventListener('click', () => setActiveView('guide'));
 document.querySelector('#loadUserProfile').addEventListener('click', loadSelectedUserProfile);
 document.querySelector('#language').addEventListener('change', event => { language = event.target.value; localStorage.setItem('tpmidi-language', language); applyLanguage(); });
+document.querySelector('[data-lang-toggle]').addEventListener('click', () => {
+  const select = document.querySelector('#language');
+  select.value = language === 'vi' ? 'en' : 'vi';
+  select.dispatchEvent(new Event('change'));
+});
 document.querySelector('#deviceType').addEventListener('change', async event => {
   if (connected) await disconnect();
   deviceType = event.target.value;
   const fader = deviceType === 'tpfader';
   showFaderSurface(fader);
-  document.querySelector('.brand').textContent = tr(`${activePortName()} Configuration`, `Cấu hình ${activePortName()}`);
+  document.querySelector('#productEyebrow').textContent = tr(`${activePortName()} · Configuration`, `${activePortName()} · Cấu hình`);
   document.querySelector('[data-i18n="midiPort"]').textContent = tr(`${activePortName()} MIDI port`, `Cổng MIDI ${activePortName()}`);
   document.querySelector('#save').textContent = tr(`Save to ${activePortName()}`, `Lưu vào ${activePortName()}`);
   document.querySelector('#userProfileRow').classList.toggle('hidden', !fader);
